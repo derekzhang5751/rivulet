@@ -7,9 +7,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author derek.zhang
  */
 class User_model extends CI_Model {
-    public $signup_id;
+    public $user_id;
     public $username;
     public $password;
+    public $user_type;
     public $status;
     public $activate_url;
     public $ip;
@@ -28,11 +29,11 @@ class User_model extends CI_Model {
         $this->status = 0;
         $this->activate_url = "http://localhost/?/user/activate/abcd1234";
         $this->ip = '127.0.0.1';
-        $this->db->insert('user_signup', $this);
+        $this->db->insert('user', $this);
     }
     
     public function isUserExist($userName) {
-        $sql = "SELECT status FROM user_signup WHERE username='".$userName."' LIMIT 1";
+        $sql = "SELECT status FROM user WHERE username='".$userName."' LIMIT 1";
         $query = $this->db->query($sql);
         $row = $query->row();
         if (empty($row)) {
@@ -41,5 +42,15 @@ class User_model extends CI_Model {
             echo "user status[$row->status]";
             return true;
         }
+    }
+    
+    public function signIn($userName, $password) {
+        $sql = "SELECT status FROM user WHERE username='".$userName."' AND password='".$password."'";
+        $query = $this->db->query($sql);
+        $row = $query->row();
+        if (isset($row) && $row->status == "1") {
+            return true;
+        }
+        return false;
     }
 }

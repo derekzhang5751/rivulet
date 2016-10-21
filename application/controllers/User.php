@@ -10,10 +10,14 @@ class User extends CI_Controller {
     //put your code here
     public function __construct() {
         parent::__construct();
+        $this->load->library('session');
+        $this->load->helper('url');
     }
     
     public function index() {
         $data = array();
+        $data['username'] = "admin";
+        $data['password'] = "123456";
         $this->load->view('user_login', $data);
     }
 
@@ -25,12 +29,29 @@ class User extends CI_Controller {
     }
     
     public function signIn() {
+        $return = "fail";
         $userName = $this->input->post("username");
         $password = $this->input->post("password");
-        if ($userName == $password) {
-            echo "ok";
+        $this->load->model('user_model', '', TRUE);
+        $ret = $this->user_model->signIn($userName, $password);
+        if ($ret === true) {
+            $data = array(
+                'username' => $userName,
+                'usertype' => 1
+            );
+            $this->session->set_userdata($data);
+            $return = "ok";
         } else {
-            echo "fail";
+            $data = array('username', 'usertype');
+            $this->session->unset_userdata($data);
         }
+        echo $return;
+    }
+    
+    public function signOut() {
+        $data = array('username', 'usertype');
+        $this->session->unset_userdata($data);
+        redirect("http://rivulet/User");
+        echo "ok";
     }
 }

@@ -9,6 +9,7 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <title>User Login</title>
         <script src="/public/js/angular.min.js"></script>
+        <script src="/public/js/angular-route.min.js"></script>
         <script src="/public/js/rivulet_app.js"></script>
         <script src="/public/js/user_controller.js"></script>
     </head>
@@ -18,11 +19,11 @@ and open the template in the editor.
         <table>
             <tr>
                 <td>User Name:</td>
-                <td><input type="text" ng-model="username" placeholder="Input your username"></td>
+                <td><input type="text" ng-model="username" ng-init="username=''" placeholder="Input your username"></td>
             </tr>
             <tr>
                 <td>Password:</td>
-                <td><input type="password" ng-model="password" placeholder="Input your password"></td>
+                <td><input type="password" ng-model="password" ng-init="password=''" placeholder="Input your password"></td>
             </tr>
         </table>
             <button type="button" id="btnlogin" name="btnlogin" ng-click="login()">LOGIN</button>

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-app.controller('userCtrl', function($scope, $http) {
-    $scope.username = "111";
-    $scope.password = "222";
+app.controller('userCtrl', function($scope, $http, $window) {
+    $scope.username = "";
+    $scope.password = "";
     
     $scope.login = function() {
         if ($scope.username == "") {
@@ -24,8 +24,13 @@ app.controller('userCtrl', function($scope, $http) {
         };
         $http.post("User/signIn", data, config).then(
             function success(response){
-                //console.log("success:");
-                console.log(response.data);
+                //console.log(response.data);
+                if (response.data == "ok") {
+                    $window.location.href = "/Home";
+                } else {
+                    //console.log(response.data);
+                    alert("Sign in failed");
+                }
             },
             function error(response){
                 //console.log("error:");
