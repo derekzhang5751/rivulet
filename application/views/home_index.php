@@ -24,7 +24,7 @@ and open the template in the editor.
                     <li><a href="/User/signOut">Sign out</a></li>
                 </ul>
             </div>
-            <div ng-view style="float: left">right
+            <div ng-view style="float: left">
             </div>
         </div>
     </body>

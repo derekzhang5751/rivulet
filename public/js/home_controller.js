@@ -9,6 +9,7 @@ app.controller('homeWelcomeCtrl', function($scope) {
 })
 
 .controller('homeCategoryCtrl', function($scope, $http) {
+    $scope.ifShowAddForm = false;
     $scope.categories = "";
     
     $scope.getAllCategories = function() {
@@ -28,6 +29,20 @@ app.controller('homeWelcomeCtrl', function($scope) {
                 alert("Get catetory data failed!");
             }
         );
+    }
+    
+    $scope.showAddForm = function($show) {
+        $scope.ifShowAddForm = $show;
+    }
+    
+    $scope.addCate = function($cate) {
+        $scope.showAddForm(false);
+    }
+    
+    $scope.cannel = function($cate) {
+        $cate.code = "";
+        $cate.name = "";
+        $scope.showAddForm(false);
     }
     
     $scope.getAllCategories();
