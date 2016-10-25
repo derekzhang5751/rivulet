@@ -36,7 +36,28 @@ app.controller('homeWelcomeCtrl', function($scope) {
     }
     
     $scope.addCate = function($cate) {
-        $scope.showAddForm(false);
+        var data = "code="+$cate.code+"&name="+$cate.name;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request getAllCatetories");
+        $http.post("Home/addNewCatetory", data, config).then(
+            function success(response){
+                if (response.data == "ok") {
+                    $cate.code = "";
+                    $cate.name = "";
+                    $scope.showAddForm(false);
+                    $scope.getAllCategories();
+                } else {
+                    alert("Add catetory failed! -"+response.data);
+                }
+            },
+            function error(response){
+                alert("Add catetory failed!");
+            }
+        );
     }
     
     $scope.cannel = function($cate) {
@@ -49,6 +70,7 @@ app.controller('homeWelcomeCtrl', function($scope) {
 })
 
 .controller('homeTransCtrl', function($scope, $http) {
+    $scope.ifShowAddForm = true;
     $scope.transactions = "";
     
     $scope.getTransactions = function() {
@@ -68,6 +90,10 @@ app.controller('homeWelcomeCtrl', function($scope) {
                 alert("Get transaction data failed!");
             }
         );
+    }
+    
+    $scope.showAddForm = function($show) {
+        $scope.ifShowAddForm = $show;
     }
     
     $scope.getTransactions();

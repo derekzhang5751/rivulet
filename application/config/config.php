@@ -213,7 +213,7 @@ $config['directory_trigger'] = 'd';
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 2;
 
 /*
 |--------------------------------------------------------------------------
@@ -370,8 +370,8 @@ $config['encryption_key'] = '';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = '/Users/DerekZhang/NetbeansProjects/rivulet/runtime';
-//$config['sess_save_path'] = 'D:/WebProjects/rivulet/runtime';
+//$config['sess_save_path'] = '/Users/DerekZhang/NetbeansProjects/rivulet/runtime';
+$config['sess_save_path'] = 'D:/WebProjects/rivulet/runtime';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

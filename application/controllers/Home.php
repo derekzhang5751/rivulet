@@ -33,6 +33,24 @@ class Home extends CI_Controller {
         echo json_encode($ret);
     }
     
+    public function addNewCatetory() {
+        $code = $this->input->post('code');
+        $name = $this->input->post('name');
+        if (empty($code) || empty($name)) {
+            exit("invalid parameters");
+        }
+        $this->load->model('category_model', '', TRUE);
+        if ($this->category_model->existCategory($code, $name)) {
+            echo "repeat";
+        } else {
+            if ($this->category_model->addCategory($code, $name)){
+                echo "ok";
+            } else {
+                echo "fail";
+            }
+        }
+    }
+    
     public function getTransactions() {
         $this->load->model('transaction_model', '', TRUE);
         $trans = $this->transaction_model->getTransactions();

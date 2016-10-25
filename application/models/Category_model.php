@@ -29,4 +29,32 @@ class Category_model extends CI_Model {
 
         return $categories;
     }
+    
+    public function existCategory($code, $name) {
+        $this->db->select('id');
+        $this->db->where("code=".$code." OR name='".$name."'");
+        $count = $this->db->count_all_results('category');
+        $message = "[EXIST " . $code . ", " . $name . "]=" . $count;
+        log_message('debug', $message);
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public function addCategory($code, $name) {
+        $data = array(
+            'code' => $code,
+            'name' => $name
+        );
+        $ret = $this->db->insert('category', $data);
+        $message = "[INSERT " . $code . ", " . $name . "]=" . $ret;
+        log_message('debug', $message);
+        if ($ret) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
