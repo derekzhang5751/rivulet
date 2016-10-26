@@ -21,40 +21,46 @@
                 <td>Transaction Date</td>
                 <td>
                     <input type="date" name="transdate" ng-model="trans.date" required>
-                    <span ng-show="addForm.catecode.$error.min || addForm.catecode.$error.max">The value must be 1000 to 9999!</span>
                 </td>
             </tr>
             <tr>
                 <td>Category</td>
                 <td>
-                    <input type="text" name="transcate" ng-model="trans.cate" required>
-                    <span ng-show="addForm.catename.$error.required">*</span>
+                    <select name="transcate" ng-model="trans.cate" required>
+                        <option value="">Choose a category</option>
+                        <option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</option>
+                    </select>
+                    <span ng-show="addForm.transcate.$error.required">**</span>
                 </td>
             </tr>
             <tr>
                 <td>Amount</td>
                 <td>
-                    <input type="number" name="transamount" min="0" max="9999" ng-model="trans.amount" required>
-                    <span ng-show="addForm.transamount.$error.min || addForm.transamount.$error.max">The value must be 0 to 9999!</span>
+                    <input type="number" name="transamount" min="0" ng-model="trans.amount" required>
+                    <span ng-show="addForm.transamount.$error.required">**</span>
+                    <span ng-show="addForm.transamount.$error.min">The value must be more than 0!</span>
                 </td>
             </tr>
             <tr>
                 <td>Type</td>
                 <td>
-                    <input type="text" name="transtype" ng-model="trans.type" required>
-                    <span ng-show="addForm.catename.$error.required">*</span>
+                    <select name="transtype" ng-model="trans.type" ng-init="trans.type='-1'">
+                        <option value="-1">Expend</option>
+                        <option value="1">Income</option>
+                    </select>
                 </td>
             </tr>
             <tr>
                 <td>Remark</td>
                 <td>
-                    <input type="text" name="transremark" min="1" max="2" ng-model="trans.remark" required>
-                    <span ng-show="addForm.transamount.$error.min || addForm.transamount.$error.max">The value must be 1 to 2!</span>
+                    <input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="20" required>
+                    <span ng-show="addForm.transremark.$error.required">**</span>
+                    <span ng-show="addForm.transremark.$error.minlength || addForm.transremark.$error.maxlength">The remark length must between 1 to 20!</span>
                 </td>
             </tr>
             </table>
-            <input type="submit" ng-click="addTransaction(cate)" ng-disabled="addForm.$invalid" value="Save">
-            <input type="button" ng-click="cannel(cate)" value="Cannel">
+            <input type="submit" ng-click="addTransaction(trans)" ng-disabled="addForm.$invalid" value="Save">
+            <input type="button" ng-click="cannel(trans)" value="Cannel">
         </form>
     </div>
 </div>

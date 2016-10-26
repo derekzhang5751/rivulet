@@ -72,6 +72,7 @@ app.controller('homeWelcomeCtrl', function($scope) {
 .controller('homeTransCtrl', function($scope, $http) {
     $scope.ifShowAddForm = true;
     $scope.transactions = "";
+    $scope.categories = "";
     
     $scope.getTransactions = function() {
         var data = "";
@@ -91,10 +92,65 @@ app.controller('homeWelcomeCtrl', function($scope) {
             }
         );
     }
+    $scope.getAllCategories = function() {
+        var data = "username=" + $scope.username;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request getAllCatetories");
+        $http.post("Home/getAllCategories", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                $scope.categories = response.data.records;
+            },
+            function error(response){
+                alert("Get catetory data failed!");
+            }
+        );
+    }
     
     $scope.showAddForm = function($show) {
         $scope.ifShowAddForm = $show;
     }
     
+    $scope.cannel = function($trans) {
+        $trans.date = "";
+        $trans.cate = "";
+        $trans.amount = "";
+        $trans.type = "";
+        $trans.remark = "";
+        $scope.showAddForm(false);
+    }
+    
+    $scope.addTransaction = function($trans) {
+        var data = "date=" + $trans.date
+            + "&cate=" + $trans.cate
+            + "&amount=" + $trans.amount
+            + "&type=" + $trans.type
+            + "&remark=" + $trans.remark;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request getAllCatetories");
+        $http.post("Home/addTransaction", data, config).then(
+            function success(response){
+                console.log(response.data);
+                if (response.data == "ok") {
+                    $scope.getAllCategories();
+                } else {
+                    alert(response.data);
+                }
+            },
+            function error(response){
+                alert("Get catetory data failed!");
+            }
+        );
+    }
+    
     $scope.getTransactions();
+    $scope.getAllCategories();
 });

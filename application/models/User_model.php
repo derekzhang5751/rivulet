@@ -21,7 +21,7 @@ class User_model extends CI_Model {
     
     public function signUp($userName, $password) {
         if ($this->isUserExist($userName)) {
-            echo "User $userName is exist.";
+            //echo "User $userName is exist.";
             return -1;
         }
         $this->username = $userName;
@@ -39,7 +39,7 @@ class User_model extends CI_Model {
         if (empty($row)) {
             return false;
         } else {
-            echo "user status[$row->status]";
+            //echo "user status[$row->status]";
             return true;
         }
     }
@@ -52,5 +52,16 @@ class User_model extends CI_Model {
             return true;
         }
         return false;
+    }
+    
+    public function getUserByName($userName) {
+        $sql = "SELECT * FROM user WHERE username='".$userName."' LIMIT 1";
+        $query = $this->db->query($sql);
+        $row = $query->row();
+        if (empty($row)) {
+            return false;
+        } else {
+            return $row;
+        }
     }
 }

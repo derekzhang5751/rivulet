@@ -52,11 +52,56 @@ class Home extends CI_Controller {
     }
     
     public function getTransactions() {
+        $ret = array();
+        $userName = $this->session->userdata('username');
+        if (empty($userName)) {
+            exit(json_encode($ret));
+        }
+        $this->load->model('user_model', '', TRUE);
+        $user = $this->user_model->getUserByName($userName);
+        if ($user == false) {
+            exit(json_encode($ret));
+        }
+        
         $this->load->model('transaction_model', '', TRUE);
-        $trans = $this->transaction_model->getTransactions();
+        $trans = $this->transaction_model->getTransactions($user->user_id);
         $ret = array(
             "records" => $trans
         );
         echo json_encode($ret);
+    }
+    
+    public function addTransaction() {
+        $userName = $this->session->userdata('username');
+        if (empty($userName)) {
+            exit("not signin");
+        }
+        $this->load->model('user_model', '', TRUE);
+        $user = $this->user_model->getUserByName($userName);
+        if ($user == false) {
+            exit("user does not exist");
+        }
+        
+        $date = $this->input->post('date');
+        $cate = $this->input->post('cate');
+        $amount = $this->input->post('amount');
+        $type = $this->input->post('type');
+        $remark = $this->input->post('remark');
+        if (empty($date) || empty($cate) || empty($amount) || empty($type) || empty($remark)) {
+            exit("fail");
+        }
+        $trans = array(
+            'userid' => $user->user_id,
+            'date' => $date,
+            'cate' => $cate,
+            'amount' => $amount,
+            'type' => $type,
+            'remark' => $remark
+        );
+        $this->load->model('transaction_model', '', TRUE);
+        if ($this->transaction_model->addTransaction($trans) == false) {
+            exit("db error");
+        }
+        echo "ok";
     }
 }
