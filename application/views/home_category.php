@@ -3,7 +3,7 @@
     <H2>This page is category.<br></H2>
     <table>
         <tr ng-repeat="r in categories">
-            <td style="width: 30px;">{{ r.id }}</td>
+            <td style="width: 30px;">{{ $index+1 }}</td>
             <td style="width: 100px;">{{ r.code }}</td>
             <td style="width: 300px;">{{ r.name }}</td>
         </tr>

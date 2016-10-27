@@ -53,6 +53,7 @@ class Home extends CI_Controller {
     
     public function getTransactions() {
         $ret = array();
+        // get current user
         $userName = $this->session->userdata('username');
         if (empty($userName)) {
             exit(json_encode($ret));
@@ -62,9 +63,17 @@ class Home extends CI_Controller {
         if ($user == false) {
             exit(json_encode($ret));
         }
-        
+        // get search conditions
+        //log_message('debug', "get transactions userid=".$user->user_id.",date1=".$this->input->post('date1').",date2=".$this->input->post('date2').",cate=".$this->input->post('cate'));
+        $search = array(
+            'userid' => $user->user_id,
+            'date1' => $this->input->post('date1'),
+            'date2' => $this->input->post('date2'),
+            'cate' => $this->input->post('cate')
+        );
+        // return result
         $this->load->model('transaction_model', '', TRUE);
-        $trans = $this->transaction_model->getTransactions($user->user_id);
+        $trans = $this->transaction_model->getTransactions($search);
         $ret = array(
             "records" => $trans
         );

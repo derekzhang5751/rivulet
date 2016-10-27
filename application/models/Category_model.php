@@ -35,7 +35,7 @@ class Category_model extends CI_Model {
         $this->db->where("code=".$code." OR name='".$name."'");
         $count = $this->db->count_all_results('category');
         $message = "[EXIST " . $code . ", " . $name . "]=" . $count;
-        log_message('debug', $message);
+        //log_message('debug', $message);
         if ($count > 0) {
             return true;
         } else {
@@ -50,7 +50,7 @@ class Category_model extends CI_Model {
         );
         $ret = $this->db->insert('category', $data);
         $message = "[INSERT " . $code . ", " . $name . "]=" . $ret;
-        log_message('debug', $message);
+        //log_message('debug', $message);
         if ($ret) {
             return true;
         } else {

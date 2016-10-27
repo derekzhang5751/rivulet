@@ -69,23 +69,42 @@ app.controller('homeWelcomeCtrl', function($scope) {
     $scope.getAllCategories();
 })
 
-.controller('homeTransCtrl', function($scope, $http) {
-    $scope.ifShowAddForm = true;
+.controller('homeTransCtrl', function($scope, $http, $filter) {
+    $scope.ifShowAddForm = false;
+    $scope.searchBeginDate = "";
+    $scope.searchEndDate = "";
+    $scope.searchCateCode = "";
     $scope.transactions = "";
     $scope.categories = "";
+    $scope.totalIncome = 0.0;
+    $scope.totalExpend = 0.0;
+    
+    $scope.computeSum = function() {
+        for (var i=0; i<$scope.transactions.length; i++) {
+            var trans = $scope.transactions[i];
+            if (trans.direction > 0) {
+                $scope.totalIncome += parseFloat(trans.amount);
+            } else {
+                $scope.totalExpend += parseFloat(trans.amount);
+            }
+        }
+    }
     
     $scope.getTransactions = function() {
-        var data = "";
+        var data = "date1=" + $scope.searchBeginDate
+            + "&date2=" + $scope.searchEndDate
+            + "&cate=" + $scope.searchCateCode;
         var config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         };
-        //console.log("Request getTransactions");
+        //console.log("Request transactions:data="+data);
         $http.post("Home/getTransactions", data, config).then(
             function success(response){
                 //console.log(response.data);
                 $scope.transactions = response.data.records;
+                $scope.computeSum();
             },
             function error(response){
                 alert("Get transaction data failed!");
@@ -125,7 +144,8 @@ app.controller('homeWelcomeCtrl', function($scope) {
     }
     
     $scope.addTransaction = function($trans) {
-        var data = "date=" + $trans.date
+        $formatDate = $filter('date')($trans.date, 'yyyy-MM-dd');
+        var data = "date=" + $formatDate
             + "&cate=" + $trans.cate
             + "&amount=" + $trans.amount
             + "&type=" + $trans.type
@@ -138,9 +158,10 @@ app.controller('homeWelcomeCtrl', function($scope) {
         //console.log("Request getAllCatetories");
         $http.post("Home/addTransaction", data, config).then(
             function success(response){
-                console.log(response.data);
+                //console.log(response.data);
                 if (response.data == "ok") {
-                    $scope.getAllCategories();
+                    $scope.showAddForm(false);
+                    $scope.getTransactions();
                 } else {
                     alert(response.data);
                 }
@@ -151,6 +172,25 @@ app.controller('homeWelcomeCtrl', function($scope) {
         );
     }
     
-    $scope.getTransactions();
+    $scope.getCategoryNameByCode = function($code) {
+        $name = "";
+        for (var i=0; i<$scope.categories.length; i++) {
+            var cat = $scope.categories[i];
+            if (cat.code == $code) {
+                $name = cat.name;
+                break;
+            }
+        }
+        return $name;
+    }
+    
+    $scope.searchTransaction = function($search) {
+        $scope.searchBeginDate = $filter('date')($search.date1, 'yyyy-MM-dd');
+        $scope.searchEndDate = $filter('date')($search.date2, 'yyyy-MM-dd');
+        $scope.searchCateCode = $search.cate;
+        $scope.getTransactions();
+    }
+    
     $scope.getAllCategories();
+    $scope.getTransactions();
 });

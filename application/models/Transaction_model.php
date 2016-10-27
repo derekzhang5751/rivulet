@@ -18,9 +18,27 @@ class Transaction_model extends CI_Model {
         parent::__construct();
     }
     
-    public function getTransactions($userId) {
-        $sql = "SELECT * FROM transactions WHERE userid=".$userId." ORDER BY occur_time";
-        $query = $this->db->query($sql);
+    public function getTransactions($search) {
+        $userid = $search['userid'];
+        $date1 = $search['date1'];
+        $date2 = $search['date2'];
+        $cate = $search['cate'];
+        
+        if (isset($userid) && !empty($userid) && $userid != 'null' && $userid != 'undefined') {
+            $this->db->where('userid', $search['userid']);
+        }
+        if (isset($date1) && !empty($date1) && $date1 != 'null' && $date1 != 'undefined') {
+            $this->db->where('occur_time >=', $search['date1']);
+        }
+        if (isset($date2) && !empty($date2) && $date2 != 'null' && $date2 != 'undefined') {
+            $this->db->where('occur_time <=', $search['date2']);
+        }
+        if (isset($cate) && !empty($cate) && $cate != 'null' && $cate != 'undefined') {
+            $this->db->where('cate_code', $search['cate']);
+        }
+        $this->db->order_by('occur_time', 'DESC');
+        $this->db->limit(100);
+        $query = $this->db->get('transactions');
         $trans = $query->result_array();
 
         return $trans;
@@ -37,7 +55,7 @@ class Transaction_model extends CI_Model {
         );
         $ret = $this->db->insert('transactions', $data);
         $message = "[INSERT " .$trans['userid']. "," .$trans['date']. "," .$trans['cate']. "," .$trans['amount']. "," .$trans['type']. "," .$trans['remark']. "]=" . $ret;
-        log_message('debug', $message);
+        //log_message('debug', $message);
         if ($ret) {
             return true;
         } else {
