@@ -305,6 +305,11 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
+    // fix bug: can not get timezone on MacOS
+    if ( ! ini_get('date.timezone') )
+    {
+        date_default_timezone_set('GMT');
+    }
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE
