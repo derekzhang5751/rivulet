@@ -9,7 +9,7 @@
         </tr>
     </table>
     <br>
-    <input type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" value="Add a new category">
+    <md-button type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" class="md-warn">Add a new category</md-button>
     <div ng-show="ifShowAddForm">
         <form name="addForm" novalidate>
             <br>Add a new category

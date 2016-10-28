@@ -3,15 +3,19 @@
     <H2>This page is transactions.<br></H2>
     <div>
         <form name="searchForm" novalidate>
-            <p>Search Conditions</p>
-            Begin Date:<input type="date" name="searchdate1" ng-model="search.date1" ng-init="search.date1=''">
-            &nbsp;&nbsp;End Date:<input type="date" name="searchdate2" ng-model="search.date2" ng-init="search.date2=''">
-            <br>Category:
-            <select name="searchcate" ng-model="search.cate" ng-init="search.cate=''" required>
-                <option value="">All categories</option>
-                <option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</option>
-            </select>
-            &nbsp;&nbsp;<input type="submit" ng-click="searchTransaction(search)" value="Search">
+            <h4>Search Conditions</h4>
+            <md-datepicker ng-model="search.date1" ng-init="search.date1=''" md-placeholder="Enter begin date" md-open-on-focus></md-datepicker>
+            &nbsp;&nbsp;
+            <md-datepicker ng-model="search.date2" ng-init="search.date2=''" md-placeholder="Enter end date" md-open-on-focus></md-datepicker>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <md-input-container>
+                <label>Choose a category</label>
+                <md-select ng-model="search.cate" ng-init="search.cate=''" required>
+                    <md-option value=""><em>All categories</em></md-option>
+                    <md-option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            &nbsp;&nbsp;<md-button type="submit" ng-click="searchTransaction(search)" class="md-primary">SEARCH</md-button>
         </form>
     </div>
     <br>
@@ -31,55 +35,78 @@
         <h4>Total Expend: {{totalExpend | currency}}</h4>
     </div>
     <br>
-    <input type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" value="Add a new transaction">
+    <md-button type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" class="md-warn">Add a new transaction</md-button>
     <div ng-show="ifShowAddForm">
         <form name="addForm" novalidate>
-            <br>Add a new transaction
+            <br><h4>Add a new transaction</h4>
             <table>
             <tr>
                 <td>Transaction Date</td>
                 <td>
-                    <input type="date" name="transdate" ng-model="trans.date" required>
+                    <md-datepicker name="transdate" ng-model="trans.date" md-placeholder="Enter date" md-open-on-focus required></md-datepicker>
+                    <!--input type="date" name="transdate" ng-model="trans.date" required-->
                 </td>
             </tr>
             <tr>
                 <td>Category</td>
                 <td>
-                    <select name="transcate" ng-model="trans.cate" required>
+                    <md-input-container>
+                        <label>Choose a category</label>
+                        <md-select name="transcate" ng-model="trans.cate" required>
+                            <md-option value=""><em>No choose</em></md-option>
+                            <md-option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</md-option>
+                        </md-select>
+                        <span ng-show="addForm.transcate.$error.required">**</span>
+                    </md-input-container>
+                    <!--select name="transcate" ng-model="trans.cate" required>
                         <option value="">Choose a category</option>
                         <option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</option>
-                    </select>
-                    <span ng-show="addForm.transcate.$error.required">**</span>
+                    </select-->
                 </td>
             </tr>
             <tr>
                 <td>Amount</td>
                 <td>
-                    <input type="number" name="transamount" min="0" ng-model="trans.amount" required>
-                    <span ng-show="addForm.transamount.$error.required">**</span>
-                    <span ng-show="addForm.transamount.$error.min">The value must be more than 0!</span>
+                    <md-input-container>
+                        <label>Amount</label>
+                        <input type="number" name="transamount" min="0" ng-model="trans.amount" required>
+                        <span ng-show="addForm.transamount.$error.required">**</span>
+                        <span ng-show="addForm.transamount.$error.min">The value must be more than 0!</span>
+                    </md-input-container>
+                    <!--input type="number" name="transamount" min="0" ng-model="trans.amount" required-->
                 </td>
             </tr>
             <tr>
                 <td>Type</td>
                 <td>
-                    <select name="transtype" ng-model="trans.type" ng-init="trans.type='-1'">
+                    <md-input-container>
+                        <label>Type</label>
+                        <md-select name="transtype" ng-model="trans.type" ng-init="trans.type='-1'">
+                            <md-option value="-1"><em>&nbsp;&nbsp;&nbsp;&nbsp;Expend&nbsp;&nbsp;</em></md-option>
+                            <md-option value="1"><em>&nbsp;&nbsp;&nbsp;&nbsp;Income&nbsp;&nbsp;</em></md-option>
+                        </md-select>
+                    </md-input-container>
+                    <!--select name="transtype" ng-model="trans.type" ng-init="trans.type='-1'">
                         <option value="-1">Expend</option>
                         <option value="1">Income</option>
-                    </select>
+                    </select-->
                 </td>
             </tr>
             <tr>
                 <td>Remark</td>
                 <td>
-                    <input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="20" required>
-                    <span ng-show="addForm.transremark.$error.required">**</span>
-                    <span ng-show="addForm.transremark.$error.minlength || addForm.transremark.$error.maxlength">The remark length must between 1 to 20!</span>
+                    <md-input-container>
+                        <label>Remark</label>
+                        <input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="20" required>
+                        <span ng-show="addForm.transremark.$error.required">**</span>
+                        <span ng-show="addForm.transremark.$error.minlength || addForm.transremark.$error.maxlength">The remark length must between 1 to 20!</span>
+                    </md-input-container>
+                    <!input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="20" required-->
                 </td>
             </tr>
             </table>
-            <input type="submit" ng-click="addTransaction(trans)" ng-disabled="addForm.$invalid" value="Save">
-            <input type="button" ng-click="cannel(trans)" value="Cannel">
+            <md-button type="submit" ng-click="addTransaction(trans)" ng-disabled="addForm.$invalid" class="md-primary">SAVE</md-button>
+            <md-button type="button" ng-click="cannel(trans)" class="md-primary">CANNEL</md-button>
         </form>
     </div>
 </div>

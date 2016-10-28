@@ -7,15 +7,25 @@ and open the template in the editor.
     Created on : Oct 19, 2016, 2:40:12 PM
     Author     : derek.z
 */
-.left_menu {
-    float: left;
-    width: 200px;
+.left-menu-a {
+    color: #555;
+    width: 230px;
+    height: 50px;
+    line-height: 50px;
+    display: block;
+    background-color: #fff;
+    border-bottom: solid;
+    border-bottom-color: #D0D0D0;
+    border-bottom-width: 2px;
+    text-decoration: none;
 }
-
-.left_menu li {
-    height: 30px;
+a:hover {
+    background-color: #D0D0D0;
+    color: #ff0000;
 }
-
+.text-center {
+    text-align: center;
+}
 table, th, td {
     border: 1px solid grey;
     border-collapse: collapse;

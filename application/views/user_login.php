@@ -8,8 +8,16 @@ and open the template in the editor.
     <head>
         <meta charset="UTF-8">
         <title>User Login</title>
-        <script src="/public/js/angular.min.js"></script>
-        <script src="/public/js/angular-route.min.js"></script>
+        <link rel="stylesheet" href="/public/css/styles.css">
+        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+        <!-- Angular JS -->
+        <script src="/public/js/angular-1.5.8/angular.min.js"></script>
+        <script src="/public/js/angular-1.5.8/angular-route.min.js"></script>
+        <script src="/public/js/angular-1.5.8/angular-animate.min.js"></script>
+        <script src="/public/js/angular-1.5.8/angular-aria.min.js"></script>
+        <script src="/public/js/angular-1.5.8/angular-messages.min.js"></script>
+        <!-- Angular Material -->
+        <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
         <script src="/public/js/rivulet_app.js"></script>
         <script src="/public/js/user_controller.js"></script>
     </head>

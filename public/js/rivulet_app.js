@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var app = angular.module("rivuletApp", ["ngRoute"]);
+var app = angular.module("rivuletApp", ["ngRoute", "ngMaterial"]);
 
 app.config(function($routeProvider){
     $routeProvider
