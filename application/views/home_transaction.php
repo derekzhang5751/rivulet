@@ -12,7 +12,7 @@
                 <label>Choose a category</label>
                 <md-select ng-model="search.cate" ng-init="search.cate=''" required>
                     <md-option value=""><em>All categories</em></md-option>
-                    <md-option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</md-option>
+                    <md-option ng-repeat="cate in categories" value="{{cate.code}}">{{isLevelRoot(cate.code)?'':'&nbsp;&nbsp;--&nbsp;&nbsp;'}}{{cate.name}}</md-option>
                 </md-select>
             </md-input-container>
             &nbsp;&nbsp;<md-button type="submit" ng-click="searchTransaction(search)" class="md-primary">SEARCH</md-button>
@@ -23,7 +23,7 @@
         <tr ng-repeat="r in transactions">
             <td style="width: 40px;">{{ $index+1 }}</td>
             <td style="width: 110px;">{{ r.occur_time }}</td>
-            <td style="width: 80px;">{{ getCategoryNameByCode(r.cate_code) }}</td>
+            <td style="width: 160px;">{{ getCategoryNameByCode(r.cate_code) }}</td>
             <td style="width: 80px;" align="right">{{ r.direction>0 ? r.amount : '-'+r.amount }}</td>
             <td style="width: 80px;" align="center">{{ r.direction>0 ? 'Income' : 'Expend' }}</td>
             <td style="width: 200px;">{{ r.remark }}</td>
@@ -54,7 +54,7 @@
                         <label>Choose a category</label>
                         <md-select name="transcate" ng-model="trans.cate" required>
                             <md-option value=""><em>No choose</em></md-option>
-                            <md-option ng-repeat="cate in categories" value="{{cate.code}}">&nbsp;&nbsp;&nbsp;&nbsp;{{cate.name}}</md-option>
+                            <md-option ng-repeat="cate in categories" value="{{cate.code}}">{{isLevelRoot(cate.code)?'':'&nbsp;&nbsp;--&nbsp;&nbsp;'}}{{cate.name}}</md-option>
                         </md-select>
                         <span ng-show="addForm.transcate.$error.required">**</span>
                     </md-input-container>
@@ -97,9 +97,9 @@
                 <td>
                     <md-input-container>
                         <label>Remark</label>
-                        <input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="20" required>
+                        <input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="40" required>
                         <span ng-show="addForm.transremark.$error.required">**</span>
-                        <span ng-show="addForm.transremark.$error.minlength || addForm.transremark.$error.maxlength">The remark length must between 1 to 20!</span>
+                        <span ng-show="addForm.transremark.$error.minlength || addForm.transremark.$error.maxlength">The remark length must between 1 to 40!</span>
                     </md-input-container>
                     <!input type="text" name="transremark" ng-model="trans.remark" ng-minlength="1" ng-maxlength="20" required-->
                 </td>

@@ -25,16 +25,20 @@ class Transaction_model extends CI_Model {
         $cate = $search['cate'];
         
         if (isset($userid) && !empty($userid) && $userid != 'null' && $userid != 'undefined') {
-            $this->db->where('userid', $search['userid']);
+            $this->db->where('userid', $userid);
         }
         if (isset($date1) && !empty($date1) && $date1 != 'null' && $date1 != 'undefined') {
-            $this->db->where('occur_time >=', $search['date1']);
+            $this->db->where('occur_time >=', $date1);
         }
         if (isset($date2) && !empty($date2) && $date2 != 'null' && $date2 != 'undefined') {
-            $this->db->where('occur_time <=', $search['date2']);
+            $this->db->where('occur_time <=', $date2);
         }
         if (isset($cate) && !empty($cate) && $cate != 'null' && $cate != 'undefined') {
-            $this->db->where('cate_code', $search['cate']);
+            if (strlen($cate) == 4) {
+                $this->db->where('cate_code', $cate);
+            } else {
+                $this->db->where('cate_code LIKE ', $cate);
+            }
         }
         $this->db->order_by('occur_time', 'DESC');
         $this->db->limit(100);

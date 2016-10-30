@@ -34,7 +34,7 @@ class Category_model extends CI_Model {
         $this->db->select('id');
         $this->db->where("code=".$code." OR name='".$name."'");
         $count = $this->db->count_all_results('category');
-        $message = "[EXIST " . $code . ", " . $name . "]=" . $count;
+        //$message = "[EXIST " . $code . ", " . $name . "]=" . $count;
         //log_message('debug', $message);
         if ($count > 0) {
             return true;
@@ -49,12 +49,21 @@ class Category_model extends CI_Model {
             'name' => $name
         );
         $ret = $this->db->insert('category', $data);
-        $message = "[INSERT " . $code . ", " . $name . "]=" . $ret;
+        //$message = "[INSERT " . $code . ", " . $name . "]=" . $ret;
         //log_message('debug', $message);
         if ($ret) {
             return true;
         } else {
             return false;
         }
+    }
+    
+    public function getRootCategorySize($rootCode) {
+        $this->db->select('id');
+        $this->db->where("code LIKE '".$rootCode."%'");
+        $count = $this->db->count_all_results('category');
+        //$message = "[ROOT CATEGORY SIZE] " . $rootCode . "->" . $count;
+        //log_message('debug', $message);
+        return $count;
     }
 }

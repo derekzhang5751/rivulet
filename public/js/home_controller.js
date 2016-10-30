@@ -8,7 +8,7 @@ app.controller('homeWelcomeCtrl', function($scope) {
     $scope.usertype = 0;
 })
 
-.controller('homeCategoryCtrl', function($scope, $http) {
+.controller('homeCategoryCtrl', function($scope, $http, rivuletServ) {
     $scope.ifShowAddForm = false;
     $scope.categories = "";
     
@@ -66,10 +66,14 @@ app.controller('homeWelcomeCtrl', function($scope) {
         $scope.showAddForm(false);
     }
     
+    $scope.isLevelRoot = function($cateCode) {
+        return rivuletServ.isLevelRoot($cateCode);
+    }
+    
     $scope.getAllCategories();
 })
 
-.controller('homeTransCtrl', function($scope, $http, $filter) {
+.controller('homeTransCtrl', function($scope, $http, $filter, rivuletServ) {
     $scope.ifShowAddForm = false;
     $scope.searchBeginDate = "";
     $scope.searchEndDate = "";
@@ -79,13 +83,21 @@ app.controller('homeWelcomeCtrl', function($scope) {
     $scope.totalIncome = 0.0;
     $scope.totalExpend = 0.0;
     
+    $scope.isLevelRoot = function($cateCode) {
+        return rivuletServ.isLevelRoot($cateCode);
+    }
+    
     $scope.computeSum = function() {
+        $scope.totalIncome = 0.0;
+        $scope.totalExpend = 0.0;
         for (var i=0; i<$scope.transactions.length; i++) {
             var trans = $scope.transactions[i];
             if (trans.direction > 0) {
                 $scope.totalIncome += parseFloat(trans.amount);
+                //console.log("INCOME: +"+trans.amount+"="+$scope.totalIncome);
             } else {
                 $scope.totalExpend += parseFloat(trans.amount);
+                //console.log("EXPEND: +"+trans.amount+"="+$scope.totalExpend);
             }
         }
     }
@@ -160,6 +172,11 @@ app.controller('homeWelcomeCtrl', function($scope) {
             function success(response){
                 //console.log(response.data);
                 if (response.data == "ok") {
+                    $trans.date = "";
+                    $trans.cate = "";
+                    $trans.amount = "";
+                    $trans.type = "";
+                    $trans.remark = "";
                     $scope.showAddForm(false);
                     $scope.getTransactions();
                 } else {

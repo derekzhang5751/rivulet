@@ -22,19 +22,29 @@ and open the template in the editor.
         <script src="/public/js/user_controller.js"></script>
     </head>
     <body>
-        <div ng-app="rivuletApp" ng-controller="userCtrl">
-        <form>
+        <div ng-app="rivuletApp" ng-controller="userCtrl" class="login-div-center">
+        <form name="loginForm" novalidate>
         <table>
             <tr>
                 <td>User Name:</td>
-                <td><input type="text" ng-model="username" ng-init="username=''" placeholder="Input your username"></td>
+                <td>
+                    <md-input-container>
+                        <label>Username</label>
+                        <input type="text" ng-model="username" ng-init="username=''" required>
+                    </md-input-container>
+                </td>
             </tr>
             <tr>
                 <td>Password:</td>
-                <td><input type="password" ng-model="password" ng-init="password=''" placeholder="Input your password"></td>
+                <td>
+                    <md-input-container>
+                        <label>Password</label>
+                        <input type="password" ng-model="password" ng-init="password=''" required>
+                    </md-input-container>
+                </td>
             </tr>
         </table>
-            <button type="button" id="btnlogin" name="btnlogin" ng-click="login()">LOGIN</button>
+            <md-button type="submit" ng-click="login()" ng-disabled="loginForm.$invalid" class="md-raised md-primary">LOGIN</md-button>
         </form>
         </div>
     </body>

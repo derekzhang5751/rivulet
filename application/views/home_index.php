@@ -51,6 +51,7 @@ and open the template in the editor.
         <!-- Angular Material -->
         <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
         <script src="/public/js/rivulet_app.js"></script>
+        <script src="/public/js/rivulet_service.js"></script>
         <script src="/public/js/home_controller.js"></script>
     </body>
 </html>

@@ -7,6 +7,16 @@ and open the template in the editor.
     Created on : Oct 19, 2016, 2:40:12 PM
     Author     : derek.z
 */
+.login-div-center {
+    width: 280px;
+    height: 270px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
 .left-menu-a {
     color: #555;
     width: 230px;

@@ -51,6 +51,26 @@ class Home extends CI_Controller {
         }
     }
     
+    private function getRealCatetoryCode($code) {
+        $realCode = "";
+        if (!isset($code) || !is_string($code) || strlen($code) != 4) {
+            return $realCode;
+        }
+        if (substr($code, 2, 2) == '00') {
+            $shortCode = substr($code, 0, 2);
+            $this->load->model('category_model', '', TRUE);
+            $count = $this->category_model->getRootCategorySize($shortCode);
+            if ($count > 1) {
+                $realCode = $shortCode.'%';
+            } else {
+                $realCode = $code;
+            }
+        } else {
+            $realCode = $code;
+        }
+        return $realCode;
+    }
+
     public function getTransactions() {
         $ret = array();
         // get current user
@@ -65,11 +85,13 @@ class Home extends CI_Controller {
         }
         // get search conditions
         //log_message('debug', "get transactions userid=".$user->user_id.",date1=".$this->input->post('date1').",date2=".$this->input->post('date2').",cate=".$this->input->post('cate'));
+        $realCate = $this->getRealCatetoryCode($this->input->post('cate'));
+        //log_message('debug', 'get transactions by real category:'.$realCate);
         $search = array(
             'userid' => $user->user_id,
             'date1' => $this->input->post('date1'),
             'date2' => $this->input->post('date2'),
-            'cate' => $this->input->post('cate')
+            'cate' => $realCate
         );
         // return result
         $this->load->model('transaction_model', '', TRUE);

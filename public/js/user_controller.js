@@ -3,9 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-app.controller('userCtrl', function($scope, $http, $window) {
+app.controller('userCtrl', function($scope, $http, $window, $mdDialog) {
     $scope.username = "";
     $scope.password = "";
+    
+    $scope.showAlert = function(ev, title, msg) {
+        $mdDialog.show(
+            $mdDialog.alert()
+              .parent(angular.element(document.querySelector('#popupContainer')))
+              .clickOutsideToClose(true)
+              .title(title)
+              .textContent(msg)
+              .ariaLabel('Alert Dialog Demo')
+              .ok('Got it')
+              .targetEvent(ev)
+        );
+    };
     
     $scope.login = function() {
         if ($scope.username == "") {
@@ -29,7 +42,8 @@ app.controller('userCtrl', function($scope, $http, $window) {
                     $window.location.href = "/Home";
                 } else {
                     //console.log(response.data);
-                    alert("Sign in failed");
+                    //alert("Sign in failed");
+                    $scope.showAlert(event, 'Sign in failed!', '');
                 }
             },
             function error(response){
