@@ -12,35 +12,31 @@ and open the template in the editor.
         <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
     </head>
     <body>
-        <div ng-app="rivuletApp" layout="column" style="height: 100%;" ng-cloak>
-            <section layout="row" flex>
-                <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-whiteframe="4">
-                    <md-toolbar class="md-theme-indigo">
-                        <h4 class="md-toobar-tools text-center">Welcome <?php echo $username; ?></h4>
-                    </md-toolbar>
-                    <md-content flex role="navigation">
-                        <ul>
-                            <li><a class="left-menu-a text-center" href="#/">Welcome <?php echo $username; ?></a></li>
-                            <li><a class="left-menu-a text-center" href="#category">Categories</a></li>
-                            <li><a class="left-menu-a text-center" href="#transaction">Transactions</a></li>
-                            <li><a class="left-menu-a text-center" href="/User/signOut">Sign out</a></li>
-                        </ul>
-                    </md-content>
-                </md-sidenav>
+        <div ng-app="rivuletApp" layout="row" style="height: 100%;" ng-cloak>
+            <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" md-whiteframe="4" style="width: 270px;">
+                <md-toolbar style="min-height: 50px; height: 50px;">
+                    <h4 class="md-toobar-tools text-center" style="margin-top: 15px; min-height: 50px; height: 50px;">Hi <?php echo ucfirst($username); ?></h4>
+                </md-toolbar>
+                <md-content flex role="navigation">
+                    <ul class="left-menu-ul">
+                        <li><a href="#/" ng-click="openLeftMenu()">Welcome <?php echo ucfirst($username); ?></a></li>
+                        <li><a href="#category" ng-click="openLeftMenu()">Categories</a></li>
+                        <li><a href="#transaction" ng-click="openLeftMenu()">Transactions</a></li>
+                        <li><a href="http://rivulet/User/signOut" ng-click="openLeftMenu()">Sign out</a></li>
+                    </ul>
+                </md-content>
+            </md-sidenav>
+            <div flex layout="column">
+                <md-toolbar layout="row" style="min-height: 50px; height: 50px;">
+                    <md-button class="md-accent hide-gt-sm" ng-click="openLeftMenu()">MENU</md-button>
+                    <h4 class="md-toobar-tools" style="margin-top: 15px; margin-left: 10px; min-height: 50px; height: 50px;">
+                        <?php echo ucfirst($username); ?>'s rivulet&nbsp;{{subTitle}}
+                    </h4>
+                </md-toolbar>
                 <md-content flex layout-padding>
                     <div ng-view layout="column" layout-align="top"></div>
                 </md-content>
-            </section>
-            <!--div class="left_menu">
-                <ul>
-                    <li><a href="#/">Welcome <?php echo $username; ?></a></li>
-                    <li><a href="#category">Categories</a></li>
-                    <li><a href="#transaction">Transactions</a></li>
-                    <li><a href="/User/signOut">Sign out</a></li>
-                </ul>
             </div>
-            <div ng-view style="float: left">
-            </div-->
         </div>
         <!-- Angular JS -->
         <script src="/public/js/angular-1.5.8/angular.min.js"></script>

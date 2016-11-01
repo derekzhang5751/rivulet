@@ -17,9 +17,12 @@ and open the template in the editor.
     right: 0;
     margin: auto;
 }
-.left-menu-a {
+.left-menu-ul {
+    margin-left: -35px;
+    margin-right: 4px;
+}
+.left-menu-ul a {
     color: #555;
-    width: 230px;
     height: 50px;
     line-height: 50px;
     display: block;
@@ -28,6 +31,7 @@ and open the template in the editor.
     border-bottom-color: #D0D0D0;
     border-bottom-width: 2px;
     text-decoration: none;
+    text-align: center;
 }
 a:hover {
     background-color: #D0D0D0;

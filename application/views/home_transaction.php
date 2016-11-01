@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <div>
-    <H2>This page is transactions.<br></H2>
     <div>
         <form name="searchForm" novalidate>
             <h4>Search Conditions</h4>

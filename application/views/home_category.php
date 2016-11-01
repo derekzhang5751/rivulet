@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <div>
-    <H2>This page is category.<br></H2>
     <table>
         <tr style="background-color: #0000ff; color: #fff;">
             <td style="width: 30px; text-align: center">ID</td>

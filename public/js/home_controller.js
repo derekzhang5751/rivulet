@@ -3,14 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-app.controller('homeWelcomeCtrl', function($scope) {
+app.controller('homeWelcomeCtrl', function($scope, $rootScope, $mdSidenav) {
     $scope.username = "";
     $scope.usertype = 0;
+    $rootScope.subTitle = "--  Welcome";
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    }
 })
 
-.controller('homeCategoryCtrl', function($scope, $http, rivuletServ) {
+.controller('homeCategoryCtrl', function($scope, $rootScope, $http, rivuletServ, $mdSidenav) {
     $scope.ifShowAddForm = false;
     $scope.categories = "";
+    $rootScope.subTitle = "--  Category";
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    }
     
     $scope.getAllCategories = function() {
         var data = "username=" + $scope.username;
@@ -73,7 +83,8 @@ app.controller('homeWelcomeCtrl', function($scope) {
     $scope.getAllCategories();
 })
 
-.controller('homeTransCtrl', function($scope, $http, $filter, rivuletServ) {
+.controller('homeTransCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav) {
+    $rootScope.subTitle = "-- Transaction";
     $scope.ifShowAddForm = false;
     $scope.searchBeginDate = "";
     $scope.searchEndDate = "";
@@ -82,6 +93,10 @@ app.controller('homeWelcomeCtrl', function($scope) {
     $scope.categories = "";
     $scope.totalIncome = 0.0;
     $scope.totalExpend = 0.0;
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    }
     
     $scope.isLevelRoot = function($cateCode) {
         return rivuletServ.isLevelRoot($cateCode);
