@@ -58,7 +58,7 @@ class Transaction_model extends CI_Model {
             'remark' => $trans['remark']
         );
         $ret = $this->db->insert('transactions', $data);
-        $message = "[INSERT " .$trans['userid']. "," .$trans['date']. "," .$trans['cate']. "," .$trans['amount']. "," .$trans['type']. "," .$trans['remark']. "]=" . $ret;
+        //$message = "[INSERT " .$trans['userid']. "," .$trans['date']. "," .$trans['cate']. "," .$trans['amount']. "," .$trans['type']. "," .$trans['remark']. "]=" . $ret;
         //log_message('debug', $message);
         if ($ret) {
             return true;
