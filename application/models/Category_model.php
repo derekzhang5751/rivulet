@@ -66,4 +66,12 @@ class Category_model extends CI_Model {
         //log_message('debug', $message);
         return $count;
     }
+    
+    public function getAllRootCategory() {
+        $sql = "SELECT * FROM category WHERE code LIKE '%00' ORDER BY code";
+        $query = $this->db->query($sql);
+        $categories = $query->result_array();
+        return $categories;
+    }
+    
 }

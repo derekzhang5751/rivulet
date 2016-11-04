@@ -55,13 +55,13 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $mdSidenav) {
         //console.log("Request getAllCatetories");
         $http.post("Home/addNewCatetory", data, config).then(
             function success(response){
-                if (response.data == "ok") {
+                if (response.data.status == "ok") {
                     $cate.code = "";
                     $cate.name = "";
                     $scope.showAddForm(false);
                     $scope.getAllCategories();
                 } else {
-                    alert("Add catetory failed! -"+response.data);
+                    alert("Add catetory failed! -"+response.data.msg);
                 }
             },
             function error(response){
@@ -186,7 +186,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $mdSidenav) {
         $http.post("Home/addTransaction", data, config).then(
             function success(response){
                 //console.log(response.data);
-                if (response.data == "ok") {
+                if (response.data.status == "ok") {
                     $trans.date = "";
                     $trans.cate = "";
                     $trans.amount = "";
@@ -195,7 +195,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $mdSidenav) {
                     $scope.showAddForm(false);
                     $scope.getTransactions();
                 } else {
-                    alert(response.data);
+                    alert(response.data.msg);
                 }
             },
             function error(response){
@@ -225,4 +225,62 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $mdSidenav) {
     
     $scope.getAllCategories();
     $scope.getTransactions();
+})
+
+.controller('homeBudgetCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav) {
+    $rootScope.subTitle = "-- Budget";
+    $scope.budgets = "";
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    }
+    
+    $scope.getPeriodWord = function($period) {
+        if ($period == 1) {
+            return "Yearly";
+        } else if ($period == 2) {
+            return "Weekly";
+        } else {
+            return "Monthly";
+        }
+    }
+    
+    $scope.getDesc = function($budget) {
+        var amount = $budget.amount;
+        if ($budget.period == 1) {
+            amount = $budget.amount / 12;
+        } else if ($budget.period == 2) {
+            amount = $budget.amount * 4.0;
+        }
+        return "$"+amount+" per month";
+    }
+    
+    $scope.getAllBudgets = function() {
+        var data = "username=" + $scope.username;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        console.log("Request getAllBudgets");
+        $http.post("Home/getAllBudgets", data, config).then(
+            function success(response){
+                console.log(response.data);
+                $scope.budgets = response.data.records;
+            },
+            function error(response){
+                alert("Get budget data failed!");
+            }
+        );
+    }
+    
+    $scope.getAllBudgets();
+})
+
+.controller('homeFixedExpendCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav) {
+    $rootScope.subTitle = "-- Fixed Expenditure";
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    }
 });

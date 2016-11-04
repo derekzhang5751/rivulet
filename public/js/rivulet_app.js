@@ -15,6 +15,14 @@ app.config(function($routeProvider){
         templateUrl: "/Home/page/home_transaction",
         controller: "homeTransCtrl"
     })
+    .when("/budget", {
+        templateUrl: "/Home/page/home_budget",
+        controller: "homeBudgetCtrl"
+    })
+    .when("/fixedexpenditure", {
+        templateUrl: "/Home/page/home_fixedexpenditure",
+        controller: "homeFixedExpendCtrl"
+    })
     .otherwise({
         templateUrl: "/Home/page/home_welcome",
         controller: "homeWelcomeCtrl"

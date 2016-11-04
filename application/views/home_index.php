@@ -22,6 +22,8 @@ and open the template in the editor.
                         <li><a href="#/" ng-click="openLeftMenu()">Welcome <?php echo ucfirst($username); ?></a></li>
                         <li><a href="#category" ng-click="openLeftMenu()">Categories</a></li>
                         <li><a href="#transaction" ng-click="openLeftMenu()">Transactions</a></li>
+                        <li><a href="#budget" ng-click="openLeftMenu()">Budget</a></li>
+                        <li><a href="#fixedexpenditure" ng-click="openLeftMenu()">Fixed Expenditure</a></li>
                         <li><a href="http://rivulet/User/signOut" ng-click="openLeftMenu()">Sign out</a></li>
                     </ul>
                 </md-content>

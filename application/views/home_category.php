@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <div>
     <table>
-        <tr style="background-color: #0000ff; color: #fff;">
+        <tr style="background-color: #428cf4; color: #fff;">
             <td style="width: 30px; text-align: center">ID</td>
             <td style="width: 50px; text-align: center">CODE</td>
             <td style="width: 200px; text-align: center">LEVEL 1</td>

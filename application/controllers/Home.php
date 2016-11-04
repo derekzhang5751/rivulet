@@ -9,6 +9,16 @@ class Home extends CI_Controller {
         $this->load->helper('url');
     }
     
+    private function exitResponse($response) {
+        if (is_string($response)) {
+            exit($response);
+        } else if (is_array($response)) {
+            exit(json_encode($response));
+        } else {
+            exit('');
+        }
+    }
+    
 	public function index() {
         $username = $this->session->userdata('username');
         if (empty($username)) {
@@ -27,26 +37,42 @@ class Home extends CI_Controller {
     public function getAllCategories() {
         $this->load->model('category_model', '', TRUE);
         $categories = $this->category_model->getAllCategory();
-        $ret = array(
-            "records" => $categories
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => $categories
         );
-        echo json_encode($ret);
+        $this->exitResponse($response);
     }
     
     public function addNewCatetory() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => ''
+        );
+        
         $code = $this->input->post('code');
         $name = $this->input->post('name');
         if (empty($code) || empty($name)) {
-            exit("invalid parameters");
+            $response['status'] = 'error';
+            $response['msg'] = 'Parameter is empty!';
+            $this->exitResponse($response);
         }
+        
         $this->load->model('category_model', '', TRUE);
         if ($this->category_model->existCategory($code, $name)) {
-            echo "repeat";
+            $response['status'] = 'error';
+            $response['msg'] = 'Category has existed!';
+            $this->exitResponse($response);
         } else {
             if ($this->category_model->addCategory($code, $name)){
-                echo "ok";
+                $response['status'] = 'ok';
+                $response['msg'] = '';
+                $this->exitResponse($response);
             } else {
-                echo "fail";
+                $response['status'] = 'error';
+                $response['msg'] = 'Database error!';
+                $this->exitResponse($response);
             }
         }
     }
@@ -71,18 +97,40 @@ class Home extends CI_Controller {
         return $realCode;
     }
 
-    public function getTransactions() {
-        $ret = array();
-        // get current user
+    private function validateSigninUser() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => ''
+        );
+        
         $userName = $this->session->userdata('username');
         if (empty($userName)) {
-            exit(json_encode($ret));
+            $response['status'] = 'error';
+            $response['msg'] = "No user signin";
+            $this->exitResponse($response);
         }
+        
         $this->load->model('user_model', '', TRUE);
         $user = $this->user_model->getUserByName($userName);
         if ($user == false) {
-            exit(json_encode($ret));
+            $response['status'] = 'error';
+            $response['msg'] = "User does not exist";
+            $this->exitResponse($response);
         }
+        
+        return $user;
+    }
+
+    public function getTransactions() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        
+        // get current user
+        $user = $this->validateSigninUser();
+
         // get search conditions
         //log_message('debug', "get transactions userid=".$user->user_id.",date1=".$this->input->post('date1').",date2=".$this->input->post('date2').",cate=".$this->input->post('cate'));
         $realCate = $this->getRealCatetoryCode($this->input->post('cate'));
@@ -96,22 +144,17 @@ class Home extends CI_Controller {
         // return result
         $this->load->model('transaction_model', '', TRUE);
         $trans = $this->transaction_model->getTransactions($search);
-        $ret = array(
-            "records" => $trans
-        );
-        echo json_encode($ret);
+        $response['records'] = $trans;
+        $this->exitResponse($response);
     }
     
     public function addTransaction() {
-        $userName = $this->session->userdata('username');
-        if (empty($userName)) {
-            exit("not signin");
-        }
-        $this->load->model('user_model', '', TRUE);
-        $user = $this->user_model->getUserByName($userName);
-        if ($user == false) {
-            exit("user does not exist");
-        }
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
         
         $date = $this->input->post('date');
         $cate = $this->input->post('cate');
@@ -119,8 +162,11 @@ class Home extends CI_Controller {
         $type = $this->input->post('type');
         $remark = $this->input->post('remark');
         if (empty($date) || empty($cate) || empty($amount) || empty($type) || empty($remark)) {
-            exit("fail");
+            $response['status'] = 'error';
+            $response['msg'] = 'Parameter is empty!';
+            $this->exitResponse($response);
         }
+        
         $trans = array(
             'userid' => $user->user_id,
             'date' => $date,
@@ -131,8 +177,52 @@ class Home extends CI_Controller {
         );
         $this->load->model('transaction_model', '', TRUE);
         if ($this->transaction_model->addTransaction($trans) == false) {
-            exit("db error");
+            $response['status'] = 'error';
+            $response['msg'] = 'Database error!';
+            $this->exitResponse($response);
         }
-        echo "ok";
+        $this->exitResponse($response);
     }
+    
+    private function initUserBudget($userId) {
+        //log_message('debug', 'Init user budget '.$userId);
+        // get all root categories
+        $this->load->model('category_model', '', TRUE);
+        $categories = $this->category_model->getAllRootCategory();
+        
+        // init every category's budget
+        $this->load->model('budget_model', '', TRUE);
+        foreach ($categories as $cate) {
+            //log_message('debug', '['.$cate['id'].']-['.$cate['code'].']-['.$cate['name'].']');
+            $budgetId = $this->budget_model->existBudget($userId, $cate['code']);
+            if ($budgetId == FALSE) {
+                $budget = array(
+                    'userid' => $userId,
+                    'code' => $cate['code'],
+                    'cate_name' => $cate['name'],
+                    'amount' => 0.00,
+                    'period' => 0
+                );
+                $this->budget_model->addBudget($budget);
+            }
+        }
+    }
+    
+    public function getAllBudgets() {
+        //log_message('debug', "[CONTROLLER]Get all budgets 1");
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
+        $this->initUserBudget($user->user_id);
+        
+        $this->load->model('budget_model', '', TRUE);
+        $budgets = $this->budget_model->getUserBudget($user->user_id);
+        $response['records'] = $budgets;
+        
+        $this->exitResponse($response);
+    }
+    
 }
