@@ -66,4 +66,13 @@ class Transaction_model extends CI_Model {
             return false;
         }
     }
+    
+    public function getUserTransSumByCate($userId, $cateMasterCode) {
+        //log_message('debug', "[MODEL]Get user budget ".$userId);
+        $sql = "SELECT SUM(amount*direction) AS amount FROM transactions WHERE userid=".$userId." AND cate_code LIKE '".$cateMasterCode."%'";
+        $query = $this->db->query($sql);
+        $sum = $query->result_array();
+        return $sum;
+    }
+
 }

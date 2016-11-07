@@ -24,6 +24,15 @@ class Budget_model extends CI_Model {
         return $budgets;
     }
     
+    public function getUserValidBudget($userId) {
+        //log_message('debug', "[MODEL]Get user budget ".$userId);
+        $sql = "SELECT * FROM budget WHERE userid=".$userId." AND amount<>0 ORDER BY code";
+        $query = $this->db->query($sql);
+        $budgets = $query->result_array();
+
+        return $budgets;
+    }
+    
     public function existBudget($userId, $code) {
         $this->db->select('id');
         $this->db->where("userid=".$userId." AND code='".$code."'");
@@ -52,10 +61,11 @@ class Budget_model extends CI_Model {
         }
     }
     
-    public function editBudget($id, $amount, $period) {
+    public function editBudget($userId, $id, $amount, $period) {
         $this->db->set('amount', $amount);
         $this->db->set('period', $period);
         $this->db->where('id', $id);
+        $this->db->where('userid', $userId);
         $ret = $this->db->update('budget');
         if ($ret) {
             return true;

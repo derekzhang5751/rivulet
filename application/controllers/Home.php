@@ -34,6 +34,47 @@ class Home extends CI_Controller {
         $this->load->view($pageName, NULL);
     }
     
+    public function welcome() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
+        
+        $this->load->model('budget_model', '', TRUE);
+        $budgets = $this->budget_model->getUserValidBudget($user->user_id);
+        if ($budgets) {
+            $this->load->model('transaction_model', '', TRUE);
+            $stat = array();
+            foreach ($budgets as $budget) {
+                $cate = $budget['code'];
+                $sum = $this->transaction_model->getUserTransSumByCate($user->user_id, substr($cate, 0, 2));
+                if ($sum) {
+                    $amount = $sum[0]['amount'];
+                    $r = array();
+                    $r['cate'] = $budget['cate_name'];
+                    if ($budget['period'] == 1) {
+                        $r['budget'] = $budget['amount'] / 12;
+                    } else if ($budget['period'] == 2) {
+                        $r['budget'] = $budget['amount'] * 4;
+                    } else {
+                        $r['budget'] = $budget['amount'];
+                    }
+                    if (empty($amount)) {
+                        $r['actual'] = 0.0;
+                    } else {
+                        $r['actual'] = $amount;
+                    }
+                    array_push($stat, $r);
+                }
+            }
+            $response['records'] = $stat;
+        }
+        
+        $this->exitResponse($response);
+    }
+    
     public function getAllCategories() {
         $this->load->model('category_model', '', TRUE);
         $categories = $this->category_model->getAllCategory();
@@ -222,6 +263,33 @@ class Home extends CI_Controller {
         $budgets = $this->budget_model->getUserBudget($user->user_id);
         $response['records'] = $budgets;
         
+        $this->exitResponse($response);
+    }
+    
+    public function editBudget() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
+        
+        $id = $this->input->post('id');
+        $amount = $this->input->post('amount');
+        $period = $this->input->post('period');
+        log_message('debug', "[CONTROLLER]Edit Budget: user=".$user->user_id."-id=".$id."-amount=".$amount."-period=".$period);
+        if (empty($id) || !isset($amount) || !isset($period) || !is_numeric($amount) || !is_numeric($period)) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Parameter is empty!';
+            $this->exitResponse($response);
+        }
+        
+        $this->load->model('budget_model', '', TRUE);
+        if ($this->budget_model->editBudget($user->user_id, $id, $amount, $period) == false) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Database error!';
+            $this->exitResponse($response);
+        }
         $this->exitResponse($response);
     }
     
