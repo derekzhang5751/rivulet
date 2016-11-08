@@ -127,21 +127,23 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.computeSum = function() {
         $scope.totalIncome = 0.0;
         $scope.totalExpend = 0.0;
-        for (var i=0; i<$scope.transactions.length; i++) {
-            var trans = $scope.transactions[i];
-            if (trans.direction > 0) {
-                $scope.totalIncome += parseFloat(trans.amount);
-                //console.log("INCOME: +"+trans.amount+"="+$scope.totalIncome);
-            } else {
-                $scope.totalExpend += parseFloat(trans.amount);
-                //console.log("EXPEND: +"+trans.amount+"="+$scope.totalExpend);
+        if ($scope.transactions) {
+            for (var i=0; i<$scope.transactions.length; i++) {
+                var trans = $scope.transactions[i];
+                if (trans.direction > 0) {
+                    $scope.totalIncome += parseFloat(trans.amount);
+                    //console.log("INCOME: +"+trans.amount+"="+$scope.totalIncome);
+                } else {
+                    $scope.totalExpend += parseFloat(trans.amount);
+                    //console.log("EXPEND: +"+trans.amount+"="+$scope.totalExpend);
+                }
             }
         }
     }
     
     $scope.getTransactions = function() {
-        var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd');
-            + "&date2=" + $filter('date')($scope.searchEndDate, 'yyyy-MM-dd');
+        var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd')
+            + "&date2=" + $filter('date')($scope.searchEndDate, 'yyyy-MM-dd')
             + "&cate=" + $scope.searchCateCode;
         var config = {
             headers: {
@@ -221,7 +223,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 }
             },
             function error(response){
-                alert("Get catetory data failed!");
+                alert("Add transaction data failed!");
             }
         );
     }
@@ -246,10 +248,11 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     }
     
     var today = new Date();
-    var mm = today.getMonth()+1;
-    var sbegin = today.getFullYear()+"-"+mm+"-1";
+    var mm = today.getMonth();
+    var year = today.getFullYear();
+    //var sbegin = year+"-"+mm+"-1";
     //console.log("search begin date:"+sbegin);
-    $scope.searchBeginDate = new Date(sbegin);
+    $scope.searchBeginDate = new Date(year, mm, 1, 0, 0, 0, 0);
     $scope.getAllCategories();
     $scope.getTransactions();
 })
@@ -368,9 +371,124 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
 
 .controller('homeFixedExpendCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav) {
     $rootScope.subTitle = "-- Fixed Expenditure";
+    $scope.ifShowAddForm = false;
+    $scope.transactions = "";
+    $scope.categories = "";
+    $scope.totalExpend = 0.0;
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
     }
     
+    $scope.isLevelRoot = function($cateCode) {
+        return rivuletServ.isLevelRoot($cateCode);
+    }
+    
+    $scope.computeSum = function() {
+        $scope.totalExpend = 0.0;
+        if ($scope.transactions) {
+            for (var i=0; i<$scope.transactions.length; i++) {
+                var trans = $scope.transactions[i];
+                $scope.totalExpend += parseFloat(trans.amount);
+                //console.log("EXPEND: +"+trans.amount+"="+$scope.totalExpend);
+            }
+        }
+    }
+    
+    $scope.getFixedExpends = function() {
+        var data = "cate=1";
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request fixed expenditure:data="+data);
+        $http.post("Home/getFixedExpenditures", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                $scope.transactions = response.data.records;
+                $scope.computeSum();
+            },
+            function error(response){
+                alert("Get fixed expenditure data failed!");
+            }
+        );
+    }
+    $scope.getAllCategories = function() {
+        var data = "username=" + $scope.username;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request getAllCatetories");
+        $http.post("Home/getAllCategories", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                $scope.categories = response.data.records;
+            },
+            function error(response){
+                alert("Get catetory data failed!");
+            }
+        );
+    }
+    
+    $scope.showAddForm = function($show) {
+        $scope.ifShowAddForm = $show;
+    }
+    
+    $scope.cannel = function($trans) {
+        $trans.date = "";
+        $trans.cate = "";
+        $trans.amount = "";
+        $trans.remark = "";
+        $scope.showAddForm(false);
+    }
+    
+    $scope.addFixedExpend = function($trans) {
+        var data = "date=" + $trans.date
+            + "&cate=" + $trans.cate
+            + "&amount=" + $trans.amount
+            + "&remark=" + $trans.remark;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Add a fixed expenditure");
+        $http.post("Home/addFixedExpenditure", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                if (response.data.status == "ok") {
+                    $trans.date = "";
+                    $trans.cate = "";
+                    $trans.amount = "";
+                    $trans.type = "";
+                    $trans.remark = "";
+                    $scope.showAddForm(false);
+                    $scope.getFixedExpends();
+                } else {
+                    alert(response.data.msg);
+                }
+            },
+            function error(response){
+                alert("Add a fixed expenditure failed!");
+            }
+        );
+    }
+    
+    $scope.getCategoryNameByCode = function($code) {
+        $name = "";
+        for (var i=0; i<$scope.categories.length; i++) {
+            var cat = $scope.categories[i];
+            if (cat.code == $code) {
+                $name = cat.name;
+                break;
+            }
+        }
+        return $name;
+    }
+    
+    $scope.getAllCategories();
+    $scope.getFixedExpends();
 });

@@ -26,7 +26,7 @@ class Budget_model extends CI_Model {
     
     public function getUserValidBudget($userId) {
         //log_message('debug', "[MODEL]Get user budget ".$userId);
-        $sql = "SELECT * FROM budget WHERE userid=".$userId." AND amount<>0 ORDER BY code";
+        $sql = "SELECT * FROM budget WHERE userid=".$userId." ORDER BY code";
         $query = $this->db->query($sql);
         $budgets = $query->result_array();
 

@@ -31,7 +31,7 @@ and open the template in the editor.
     border-bottom-color: #D0D0D0;
     border-bottom-width: 2px;
     text-decoration: none;
-    text-align: center;
+    text-align: left;
 }
 a:hover {
     background-color: #D0D0D0;

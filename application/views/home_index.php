@@ -9,7 +9,7 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <title>Rivulet</title>
         <link rel="stylesheet" href="/public/css/styles.css">
-        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+        <link rel="stylesheet" href="/public/css/angular_material/1.1.0/angular-material.min.css">
     </head>
     <body>
         <div ng-app="rivuletApp" layout="row" style="height: 100%;" ng-cloak>
@@ -19,12 +19,12 @@ and open the template in the editor.
                 </md-toolbar>
                 <md-content flex role="navigation">
                     <ul class="left-menu-ul">
-                        <li><a href="#/" ng-click="openLeftMenu()">Welcome <?php echo ucfirst($username); ?></a></li>
-                        <li><a href="#category" ng-click="openLeftMenu()">Categories</a></li>
-                        <li><a href="#transaction" ng-click="openLeftMenu()">Transactions</a></li>
-                        <li><a href="#budget" ng-click="openLeftMenu()">Budget</a></li>
-                        <li><a href="#fixedexpenditure" ng-click="openLeftMenu()">Fixed Expenditure</a></li>
-                        <li><a href="http://rivulet/User/signOut" ng-click="openLeftMenu()">Sign out</a></li>
+                        <li><a href="#/" ng-click="openLeftMenu()">&nbsp;&nbsp;Welcome <?php echo ucfirst($username); ?></a></li>
+                        <li><a href="#category" ng-click="openLeftMenu()">&nbsp;&nbsp;Categories</a></li>
+                        <li><a href="#transaction" ng-click="openLeftMenu()">&nbsp;&nbsp;Transactions</a></li>
+                        <li><a href="#budget" ng-click="openLeftMenu()">&nbsp;&nbsp;Budget</a></li>
+                        <li><a href="#fixedexpenditure" ng-click="openLeftMenu()">&nbsp;&nbsp;Fixed Expenditure</a></li>
+                        <li><a href="http://rivulet/User/signOut" ng-click="openLeftMenu()">&nbsp;&nbsp;Sign out</a></li>
                     </ul>
                 </md-content>
             </md-sidenav>
@@ -47,7 +47,7 @@ and open the template in the editor.
         <script src="/public/js/angular-1.5.8/angular-aria.min.js"></script>
         <script src="/public/js/angular-1.5.8/angular-messages.min.js"></script>
         <!-- Angular Material -->
-        <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+        <script src="/public/js/angular_material/1.1.0/angular-material.min.js"></script>
         <script src="/public/js/rivulet_app.js"></script>
         <script src="/public/js/rivulet_service.js"></script>
         <script src="/public/js/home_controller.js"></script>

@@ -293,4 +293,58 @@ class Home extends CI_Controller {
         $this->exitResponse($response);
     }
     
+    public function getFixedExpenditures() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        
+        // get current user
+        $user = $this->validateSigninUser();
+
+        $search = array(
+            'userid' => $user->user_id
+        );
+        // return result
+        $this->load->model('fixedexpends_model', '', TRUE);
+        $trans = $this->fixedexpends_model->getFixedExpends($search);
+        $response['records'] = $trans;
+        $this->exitResponse($response);
+    }
+    
+    public function addFixedExpenditure() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
+        
+        $date = $this->input->post('date');
+        $cate = $this->input->post('cate');
+        $amount = $this->input->post('amount');
+        $remark = $this->input->post('remark');
+        if (empty($date) || empty($cate) || empty($amount) || empty($remark)) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Parameter is empty!';
+            $this->exitResponse($response);
+        }
+        
+        $trans = array(
+            'userid' => $user->user_id,
+            'date' => $date,
+            'cate' => $cate,
+            'amount' => $amount,
+            'remark' => $remark
+        );
+        $this->load->model('fixedexpends_model', '', TRUE);
+        if ($this->fixedexpends_model->addFixedExpend($trans) == false) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Database error!';
+            $this->exitResponse($response);
+        }
+        $this->exitResponse($response);
+    }
+    
 }

@@ -1,48 +1,40 @@
 <!DOCTYPE html>
 <div>
-    <div>
-        <form name="searchForm" novalidate>
-            <h4>Search Conditions</h4>
-            <md-datepicker ng-model="search.date1" ng-init="search.date1=''" md-placeholder="Enter begin date" md-open-on-focus></md-datepicker>
-            &nbsp;&nbsp;
-            <md-datepicker ng-model="search.date2" ng-init="search.date2=''" md-placeholder="Enter end date" md-open-on-focus></md-datepicker>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <md-input-container>
-                <label>Choose a category</label>
-                <md-select ng-model="search.cate" ng-init="search.cate=''" required>
-                    <md-option value=""><em>All categories</em></md-option>
-                    <md-option ng-repeat="cate in categories" value="{{cate.code}}">{{isLevelRoot(cate.code)?'':'&nbsp;&nbsp;--&nbsp;&nbsp;'}}{{cate.name}}</md-option>
-                </md-select>
-            </md-input-container>
-            &nbsp;&nbsp;<md-button type="submit" ng-click="searchTransaction(search)" class="md-primary">SEARCH</md-button>
-        </form>
-    </div>
-    <br>
     <table>
+        <tr style="background-color: #428cf4; color: #fff;">
+            <td style="width: 40px; text-align: center;">ID</td>
+            <td style="width: 110px; text-align: center;">OCCUR TIME</td>
+            <td style="width: 160px; text-align: center;">CATEGORY</td>
+            <td style="width: 80px; text-align: center;" align="right">AMOUNT</td>
+            <td style="width: 200px; text-align: center;">REMARK</td>
+        </tr>
         <tr ng-repeat="r in transactions">
-            <td style="width: 40px;">{{ $index+1 }}</td>
-            <td style="width: 110px;">{{ r.occur_time }}</td>
-            <td style="width: 160px;">{{ getCategoryNameByCode(r.cate_code) }}</td>
-            <td style="width: 80px;" align="right">{{ r.direction>0 ? r.amount : '-'+r.amount }}</td>
-            <td style="width: 80px;" align="center">{{ r.direction>0 ? 'Income' : 'Expend' }}</td>
-            <td style="width: 200px;">{{ r.remark }}</td>
+            <td style="text-align: center;">{{ $index+1 }}</td>
+            <td style="text-align: center;">{{ r.occur_time }}</td>
+            <td style="text-align: center;">{{ getCategoryNameByCode(r.cate_code) }}</td>
+            <td style="text-align: center;" align="right">{{ r.amount }}</td>
+            <td style="text-align: center;">{{ r.remark }}</td>
         </tr>
     </table>
     <br>
     <div>
-        <h4>Total Income: {{totalIncome | currency}}</h4>
         <h4>Total Expend: {{totalExpend | currency}}</h4>
     </div>
     <br>
-    <md-button type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" class="md-warn">Add a new transaction</md-button>
+    <md-button type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" class="md-warn">Add a new fixed expenditure</md-button>
     <div ng-show="ifShowAddForm">
         <form name="addForm" novalidate>
-            <br><h4>Add a new transaction</h4>
+            <br><h4>Add a new fixed expenditure</h4>
             <table>
             <tr>
                 <td>Transaction Date</td>
                 <td>
-                    <md-datepicker name="transdate" ng-model="trans.date" md-placeholder="Enter date" md-open-on-focus required></md-datepicker>
+                    <md-input-container>
+                        <label>Date</label>
+                        <input type="number" name="transdate" min="1" max="31" ng-model="trans.date" required>
+                        <span ng-show="addForm.transdate.$error.required">**</span>
+                        <span ng-show="addForm.transdate.$error.min">The value must be between 1 and 31!</span>
+                    </md-input-container>
                 </td>
             </tr>
             <tr>
@@ -70,18 +62,6 @@
                 </td>
             </tr>
             <tr>
-                <td>Type</td>
-                <td>
-                    <md-input-container>
-                        <label>Type</label>
-                        <md-select name="transtype" ng-model="trans.type" ng-init="trans.type='-1'">
-                            <md-option value="-1"><em>&nbsp;&nbsp;&nbsp;&nbsp;Expend&nbsp;&nbsp;</em></md-option>
-                            <md-option value="1"><em>&nbsp;&nbsp;&nbsp;&nbsp;Income&nbsp;&nbsp;</em></md-option>
-                        </md-select>
-                    </md-input-container>
-                </td>
-            </tr>
-            <tr>
                 <td>Remark</td>
                 <td>
                     <md-input-container>
@@ -92,27 +72,8 @@
                     </md-input-container>
                 </td>
             </tr>
-            <!--tr>
-                <td>Split</td>
-                <td>
-                    <md-input-container style="min-width: 100px;">
-                        <label>Split Type</label>
-                        <md-select name="transsplittype" ng-model="trans.splittype" required>
-                            <md-option value="0"><em>No Split</em></md-option>
-                            <md-option value="1" selected="true"><em>Monthly</em></md-option>
-                        </md-select>
-                    </md-input-container>
-                    <md-input-container style="min-width: 100px;">
-                        <label>Split Times</label>
-                        <md-select name="transsplitsize" ng-model="trans.splitsize" required>
-                            <md-option value="1" selected="true">1</md-option>
-                            <md-option value="2">2</md-option>
-                        </md-select>
-                    </md-input-container>
-                </td>
-            </tr-->
             </table>
-            <md-button type="submit" ng-click="addTransaction(trans)" ng-disabled="addForm.$invalid" class="md-primary">SAVE</md-button>
+            <md-button type="submit" ng-click="addFixedExpend(trans)" ng-disabled="addForm.$invalid" class="md-primary">SAVE</md-button>
             <md-button type="button" ng-click="cannel(trans)" class="md-primary">CANNEL</md-button>
         </form>
     </div>
