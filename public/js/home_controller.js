@@ -140,8 +140,8 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     }
     
     $scope.getTransactions = function() {
-        var data = "date1=" + $scope.searchBeginDate
-            + "&date2=" + $scope.searchEndDate
+        var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd');
+            + "&date2=" + $filter('date')($scope.searchEndDate, 'yyyy-MM-dd');
             + "&cate=" + $scope.searchCateCode;
         var config = {
             headers: {
@@ -239,12 +239,17 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     }
     
     $scope.searchTransaction = function($search) {
-        $scope.searchBeginDate = $filter('date')($search.date1, 'yyyy-MM-dd');
-        $scope.searchEndDate = $filter('date')($search.date2, 'yyyy-MM-dd');
+        $scope.searchBeginDate = $search.date1;
+        $scope.searchEndDate = $search.date2;
         $scope.searchCateCode = $search.cate;
         $scope.getTransactions();
     }
     
+    var today = new Date();
+    var mm = today.getMonth()+1;
+    var sbegin = today.getFullYear()+"-"+mm+"-1";
+    //console.log("search begin date:"+sbegin);
+    $scope.searchBeginDate = new Date(sbegin);
     $scope.getAllCategories();
     $scope.getTransactions();
 })

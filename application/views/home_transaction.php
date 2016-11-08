@@ -3,7 +3,7 @@
     <div>
         <form name="searchForm" novalidate>
             <h4>Search Conditions</h4>
-            <md-datepicker ng-model="search.date1" ng-init="search.date1=''" md-placeholder="Enter begin date" md-open-on-focus></md-datepicker>
+            <md-datepicker ng-model="search.date1" ng-init="search.date1=searchBeginDate" md-placeholder="Enter begin date" md-open-on-focus></md-datepicker>
             &nbsp;&nbsp;
             <md-datepicker ng-model="search.date2" ng-init="search.date2=''" md-placeholder="Enter end date" md-open-on-focus></md-datepicker>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
