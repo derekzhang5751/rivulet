@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <div>
-    <table>
+    <table style="width: 100%;">
         <tr style="background-color: #428cf4; color: #fff;"><td>
             <table class="budgettable1"><tr>
                 <td style="width: 30px; text-align: center">ID</td>
@@ -36,8 +36,7 @@
             </tr></table></form>
         </td></tr>
     </table>
-    <br>
-    <div>
+    <div style="text-align: right;">
         <h4>Total Budgets: {{totalBudget | currency}}</h4>
     </div>
 </div>

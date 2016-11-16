@@ -7,12 +7,12 @@ and open the template in the editor.
 <div>
     <div><H1>Welcome to use Rivulet!</H1></div>
     <div>
-        <table>
+        <table style="width: 100%;">
             <tr style="background-color: #428cf4; color: #fff;">
-                <td style="width: 30px; text-align: center">ID</td>
-                <td style="width: 200px; text-align: center">CATEGORY</td>
-                <td style="width: 100px; text-align: center">BUDGET</td>
-                <td style="width: 100px; text-align: center">ACTUAL</td>
+                <td style="width: 10%; text-align: center">ID</td>
+                <td style="width: 40%; text-align: center">CATEGORY</td>
+                <td style="width: 25%; text-align: center">BUDGET</td>
+                <td style="width: 25%; text-align: center">ACTUAL</td>
             </tr>
             <tr ng-repeat="r in welcomeStat" style="background-color: {{ isLevelRoot(r.code) ? '#f1f1f1' : '#ffffff' }};">
                 <td style="text-align: right">{{ $index+1 }}</td>

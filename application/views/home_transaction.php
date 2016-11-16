@@ -2,7 +2,7 @@
 <div>
     <div>
         <form name="searchForm" novalidate>
-            <h4>Search Conditions</h4>
+            <h4 style="text-align: left;">Search Conditions</h4>
             <md-datepicker ng-model="search.date1" ng-init="search.date1=searchBeginDate" md-placeholder="Enter begin date" md-open-on-focus></md-datepicker>
             &nbsp;&nbsp;
             <md-datepicker ng-model="search.date2" ng-init="search.date2=''" md-placeholder="Enter end date" md-open-on-focus></md-datepicker>
@@ -18,18 +18,17 @@
         </form>
     </div>
     <br>
-    <table>
+    <table style="width: 100%;">
         <tr ng-repeat="r in transactions">
-            <td style="width: 40px;">{{ $index+1 }}</td>
-            <td style="width: 110px;">{{ r.occur_time }}</td>
-            <td style="width: 160px;">{{ getCategoryNameByCode(r.cate_code) }}</td>
-            <td style="width: 80px;" align="right">{{ r.direction>0 ? r.amount : '-'+r.amount }}</td>
-            <td style="width: 80px;" align="center">{{ r.direction>0 ? 'Income' : 'Expend' }}</td>
-            <td style="width: 200px;">{{ r.remark }}</td>
+            <td style="width: 5%;">{{ $index+1 }}</td>
+            <td style="width: 15%;">{{ r.occur_time }}</td>
+            <td style="width: 28%;">{{ getCategoryNameByCode(r.cate_code) }}</td>
+            <td style="width: 12%;" align="right">{{ r.direction>0 ? r.amount : '-'+r.amount }}</td>
+            <td style="width: 10%;" align="center">{{ r.direction>0 ? 'Income' : 'Expend' }}</td>
+            <td style="width: 30%;">{{ r.remark }}</td>
         </tr>
     </table>
-    <br>
-    <div>
+    <div style="text-align: right;">
         <h4>Total Income: {{totalIncome | currency}}</h4>
         <h4>Total Expend: {{totalExpend | currency}}</h4>
     </div>
@@ -38,7 +37,7 @@
     <div ng-show="ifShowAddForm">
         <form name="addForm" novalidate>
             <br><h4>Add a new transaction</h4>
-            <table>
+            <table style="margin: 0 auto;">
             <tr>
                 <td>Transaction Date</td>
                 <td>

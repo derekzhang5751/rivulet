@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <div>
-    <table>
+    <table style="width: 100%;">
         <tr style="background-color: #428cf4; color: #fff;">
-            <td style="width: 40px; text-align: center;">ID</td>
-            <td style="width: 110px; text-align: center;">OCCUR TIME</td>
-            <td style="width: 160px; text-align: center;">CATEGORY</td>
-            <td style="width: 80px; text-align: center;" align="right">AMOUNT</td>
-            <td style="width: 200px; text-align: center;">REMARK</td>
+            <td style="width: 10%; text-align: center;">ID</td>
+            <td style="width: 10%; text-align: center;">OCCUR TIME</td>
+            <td style="width: 30%; text-align: center;">CATEGORY</td>
+            <td style="width: 15%; text-align: center;" align="right">AMOUNT</td>
+            <td style="width: 35%; text-align: center;">REMARK</td>
         </tr>
         <tr ng-repeat="r in transactions">
             <td style="text-align: center;">{{ $index+1 }}</td>
@@ -16,22 +16,20 @@
             <td style="text-align: center;">{{ r.remark }}</td>
         </tr>
     </table>
-    <br>
-    <div>
+    <div style="text-align: right;">
         <h4>Total Expend: {{totalExpend | currency}}</h4>
     </div>
-    <br>
     <md-button type="button" ng-show="!ifShowAddForm" ng-click="showAddForm(true)" class="md-warn">Add a new fixed expenditure</md-button>
     <div ng-show="ifShowAddForm">
         <form name="addForm" novalidate>
             <br><h4>Add a new fixed expenditure</h4>
-            <table>
+            <table style="margin: 0 auto;">
             <tr>
                 <td>Transaction Date</td>
                 <td>
                     <md-input-container>
                         <label>Date</label>
-                        <input type="number" name="transdate" min="1" max="31" ng-model="trans.date" required>
+                        <input type="number" name="transdate" min="1" max="31" ng-model="trans.date" ng-init="trans.date=1" required>
                         <span ng-show="addForm.transdate.$error.required">**</span>
                         <span ng-show="addForm.transdate.$error.min">The value must be between 1 and 31!</span>
                     </md-input-container>

@@ -6,14 +6,14 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Rivulet</title>
-        <link rel="stylesheet" href="/public/css/styles.css">
         <link rel="stylesheet" href="/public/css/angular_material/1.1.0/angular-material.min.css">
+        <link rel="stylesheet" href="/public/css/styles.css">
     </head>
     <body>
-        <div ng-app="rivuletApp" layout="row" style="height: 100%;" ng-cloak>
-            <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" md-whiteframe="4" style="width: 270px;">
+        <div class="frame-div" ng-app="rivuletApp" layout="row" ng-cloak>
+            <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" md-whiteframe="4" style="width: 200px;">
                 <md-toolbar style="min-height: 50px; height: 50px;">
                     <h4 class="md-toobar-tools text-center" style="margin-top: 15px; min-height: 50px; height: 50px;">Hi <?php echo ucfirst($username); ?></h4>
                 </md-toolbar>
@@ -28,9 +28,9 @@ and open the template in the editor.
                     </ul>
                 </md-content>
             </md-sidenav>
-            <div flex layout="column">
+            <div flex layout="column" style="height: 100%;">
                 <md-toolbar layout="row" style="min-height: 50px; height: 50px;">
-                    <md-button class="md-accent hide-gt-sm" ng-click="openLeftMenu()">MENU</md-button>
+                    <md-button class="md-accent hide-gt-sm" ng-click="openLeftMenu()" style="min-width: 48px; width: 48px;">MENU</md-button>
                     <h4 class="md-toobar-tools" style="margin-top: 15px; margin-left: 10px; min-height: 50px; height: 50px;">
                         <?php echo ucfirst($username); ?>'s rivulet&nbsp;{{subTitle}}
                     </h4>

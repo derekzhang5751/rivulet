@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <div>
-    <table>
+    <table style="width: 100%;">
         <tr style="background-color: #428cf4; color: #fff;">
-            <td style="width: 30px; text-align: center">ID</td>
-            <td style="width: 50px; text-align: center">CODE</td>
-            <td style="width: 200px; text-align: center">LEVEL 1</td>
-            <td style="width: 200px; text-align: center">LEVEL 2</td>
+            <td style="width: 10%; text-align: center">ID</td>
+            <td style="width: 20%; text-align: center">CODE</td>
+            <td style="width: 35%; text-align: center">LEVEL 1</td>
+            <td style="width: 35%; text-align: center">LEVEL 2</td>
         </tr>
         <tr ng-repeat="r in categories" style="background-color: {{ isLevelRoot(r.code) ? '#f1f1f1' : '#ffffff' }};">
-            <td style="width: 30px; text-align: right">{{ $index+1 }}</td>
-            <td style="width: 50px; text-align: center">{{ r.code }}</td>
-            <td style="width: 200px; text-align: center">{{ isLevelRoot(r.code) ? r.name : '' }}</td>
-            <td style="width: 200px; text-align: center">{{ isLevelRoot(r.code) ? '' : r.name }}</td>
+            <td style="text-align: right">{{ $index+1 }}</td>
+            <td style="text-align: center">{{ r.code }}</td>
+            <td style="text-align: center">{{ isLevelRoot(r.code) ? r.name : '' }}</td>
+            <td style="text-align: center">{{ isLevelRoot(r.code) ? '' : r.name }}</td>
         </tr>
     </table>
     <br>
@@ -19,7 +19,7 @@
     <div ng-show="ifShowAddForm">
         <form name="addForm" novalidate>
             <br><h4>Add a new category</h4>
-            <table>
+            <table style="margin: 0 auto;">
             <tr>
                 <td>Category code</td>
                 <td>
