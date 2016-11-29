@@ -27,3 +27,7 @@ DirectoryIndex index.php
     RewriteRule ^(.*)$ index.php/$1 [L]
     #RewriteRule ^(.*)$ index.php?s=$1 [QSA,PT,L]
 </IfModule>
+
+Can not input char &.
+Transaction type can not be keep when the second time.
+Automatic import SCV data from bank.
