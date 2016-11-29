@@ -115,6 +115,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.categories = "";
     $scope.totalIncome = 0.0;
     $scope.totalExpend = 0.0;
+    $scope.addtrans = null;
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
@@ -183,18 +184,24 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $scope.showAddForm = function($show) {
         $scope.ifShowAddForm = $show;
+        //if ($show) {
+        //    var el = document.getElementById('transframe');
+        //    el.scrollTop = el.scrollHeight - el.height;
+        //}
     }
     
     $scope.cannel = function($trans) {
+        $scope.addtrans = $trans;
         $trans.date = "";
         $trans.cate = "";
         $trans.amount = "";
-        $trans.type = "";
+        $trans.type = "-1";
         $trans.remark = "";
         $scope.showAddForm(false);
     }
     
     $scope.addTransaction = function($trans) {
+        $scope.addtrans = $trans;
         $formatDate = $filter('date')($trans.date, 'yyyy-MM-dd');
         var data = "date=" + $formatDate
             + "&cate=" + $trans.cate
@@ -214,7 +221,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                     $trans.date = "";
                     $trans.cate = "";
                     $trans.amount = "";
-                    $trans.type = "";
+                    $trans.type = "-1";
                     $trans.remark = "";
                     $scope.showAddForm(false);
                     $scope.getTransactions();
