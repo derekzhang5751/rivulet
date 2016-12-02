@@ -347,4 +347,39 @@ class Home extends CI_Controller {
         $this->exitResponse($response);
     }
     
+    public function updateCategoriesAnalysis() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'type' => 'categories',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
+        
+        $date1 = $this->input->post('date1');
+        $date2 = $this->input->post('date2');
+
+        $this->load->model('category_model', '', TRUE);
+        $this->load->model('transaction_model', '', TRUE);
+        
+        $categories = $this->category_model->getAllRootCategory();
+        $list = array();
+        foreach ($categories as $cate) {
+            $sum = $this->transaction_model->getUserTransSumByCateDate($user->user_id, substr($cate['code'], 0, 2), $date1, $date2);
+            if ($sum) {
+                $amount = $sum[0]['amount'];
+                if (floatval($amount) < 0.0) {
+                    $r = array();
+                    $r['code'] = $cate['code'];
+                    $r['name'] = $cate['name'];
+                    $r['sum'] = $amount * -1;
+                    array_push($list, $r);
+                }
+            }
+        }
+        $response['records'] = $list;
+
+        $this->exitResponse($response);
+    }
+    
 }

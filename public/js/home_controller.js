@@ -376,7 +376,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.getAllBudgets();
 })
 
-.controller('homeFixedExpendCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav) {
+.controller('homeFixedExpendCtrl', function($scope, $rootScope, $http, rivuletServ, $mdSidenav) {
     $rootScope.subTitle = "-- Fixed Expenditure";
     $scope.ifShowAddForm = false;
     $scope.transactions = "";
@@ -498,4 +498,96 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $scope.getAllCategories();
     $scope.getFixedExpends();
-});
+})
+
+.controller('analysisCtrl', function($scope, $rootScope, $http, $filter, $mdSidenav) {
+    $rootScope.subTitle = "-- Analysis";
+    $scope.ifShowAddForm = false;
+    $scope.searchBeginDate = "";
+    $scope.searchEndDate = "";
+    $scope.originData = null;
+    $scope.labels = ["1", "2", "3", "4", "5", "6"];
+    $scope.data = [28,48,40,19,96,27];
+    $scope.analysisChart = null;
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    }
+    
+    $scope.drawChart = function() {
+        var ctx = document.getElementById("analysisChart").getContext("2d");
+        var data = {
+            labels: $scope.labels,
+            datasets: [
+                {
+                    label: "Expenditure Sum",
+                    backgroundColor: "rgba(54, 162, 235, 0.2)",
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1,
+                    data: $scope.data
+                }
+            ]
+        };
+        var options = null;
+        var config = {
+            type: "horizontalBar",
+            data: data,
+            options: options
+        };
+        if ($scope.analysisChart === null) {
+            $scope.analysisChart = new Chart(ctx, config);
+        } else {
+            $scope.analysisChart.destroy();
+            $scope.analysisChart = new Chart(ctx, config);
+        }
+    }
+    
+    $scope.updateCategoriesAnalysis = function() {
+        var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd')
+            + "&date2=" + $filter('date')($scope.searchEndDate, 'yyyy-MM-dd');
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request updateCategoriesAnalysis");
+        $http.post("Home/updateCategoriesAnalysis", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                if (response.data.status == "ok") {
+                    $scope.labels = [];
+                    $scope.data = [];
+                    $scope.originData = response.data.records;
+                    for (var i=0; i<$scope.originData.length; i++) {
+                        var r = $scope.originData[i];
+                        $scope.labels.push(r.name);
+                        $scope.data.push(r.sum);
+                    }
+                    // draw chart
+                    if ($scope.originData.length > 0) {
+                        $scope.drawChart();
+                    }
+                } else {
+                    alert(response.data.msg);
+                }
+            },
+            function error(response){
+                alert("Update catetory analysis data failed!");
+            }
+        );
+    }
+    
+    $scope.reanalyze = function($search) {
+        $scope.searchBeginDate = $search.date1;
+        $scope.searchEndDate = $search.date2;
+        $scope.updateCategoriesAnalysis();
+    }
+    
+    var today = new Date();
+    var mm = today.getMonth();
+    var year = today.getFullYear();
+    
+    $scope.searchBeginDate = new Date(year, mm, 1, 0, 0, 0, 0);
+    $scope.updateCategoriesAnalysis();
+})
+;

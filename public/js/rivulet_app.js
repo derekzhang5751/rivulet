@@ -23,6 +23,10 @@ app.config(function($routeProvider){
         templateUrl: "/Home/page/home_fixedexpenditure",
         controller: "homeFixedExpendCtrl"
     })
+    .when("/analysis", {
+        templateUrl: "/Home/page/home_analysis",
+        controller: "analysisCtrl"
+    })
     .otherwise({
         templateUrl: "/Home/page/home_welcome",
         controller: "homeWelcomeCtrl"

@@ -24,6 +24,7 @@ and open the template in the editor.
                         <li><a href="#transaction" ng-click="openLeftMenu()">&nbsp;&nbsp;Transactions</a></li>
                         <li><a href="#budget" ng-click="openLeftMenu()">&nbsp;&nbsp;Budget</a></li>
                         <li><a href="#fixedexpenditure" ng-click="openLeftMenu()">&nbsp;&nbsp;Fixed Expenditure</a></li>
+                        <li><a href="#analysis" ng-click="openLeftMenu()">&nbsp;&nbsp;Analysis</a></li>
                         <li><a href="http://rivulet/User/signOut" ng-click="openLeftMenu()">&nbsp;&nbsp;Sign out</a></li>
                     </ul>
                 </md-content>
@@ -40,6 +41,8 @@ and open the template in the editor.
                 </md-content>
             </div>
         </div>
+        <!-- Chart JS -->
+        <script src="/public/chartjs/Chart.min.js"></script>
         <!-- Angular JS -->
         <script src="/public/js/angular-1.5.8/angular.min.js"></script>
         <script src="/public/js/angular-1.5.8/angular-route.min.js"></script>
