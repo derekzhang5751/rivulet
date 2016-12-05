@@ -12,4 +12,6 @@
     <br>
 Analysis Result
     <div><canvas id="analysisChart"></canvas></div>
+    <br /><br /><br />
+    <div style="width: 70%;"><canvas id="analysisChart2"></canvas></div>
 </div>

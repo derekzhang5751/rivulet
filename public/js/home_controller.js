@@ -500,15 +500,19 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.getFixedExpends();
 })
 
-.controller('analysisCtrl', function($scope, $rootScope, $http, $filter, $mdSidenav) {
+.controller('analysisCtrl', function($scope, $rootScope, $http, $filter, $mdSidenav, rivuletServ) {
     $rootScope.subTitle = "-- Analysis";
     $scope.ifShowAddForm = false;
     $scope.searchBeginDate = "";
     $scope.searchEndDate = "";
     $scope.originData = null;
+
     $scope.labels = ["1", "2", "3", "4", "5", "6"];
     $scope.data = [28,48,40,19,96,27];
     $scope.analysisChart = null;
+    $scope.colors1 = [];
+    $scope.colors2 = [];
+    $scope.analysisChart2 = null;
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
@@ -521,8 +525,8 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             datasets: [
                 {
                     label: "Expenditure Sum",
-                    backgroundColor: "rgba(54, 162, 235, 0.2)",
-                    borderColor: "rgba(54, 162, 235, 1)",
+                    backgroundColor: $scope.colors1,
+                    borderColor: $scope.colors2,
                     borderWidth: 1,
                     data: $scope.data
                 }
@@ -541,6 +545,32 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             $scope.analysisChart = new Chart(ctx, config);
         }
     }
+    $scope.drawChart2 = function() {
+        var ctx = document.getElementById("analysisChart2").getContext("2d");
+        var data = {
+            labels: $scope.labels,
+            datasets: [
+                {
+                    label: "Expenditure Sum",
+                    backgroundColor: $scope.colors1,
+                    hoverBackgroundColor: $scope.colors2,
+                    data: $scope.data
+                }
+            ]
+        };
+        var options = null;
+        var config = {
+            type: "pie",
+            data: data,
+            options: options
+        };
+        if ($scope.analysisChart2 === null) {
+            $scope.analysisChart2 = new Chart(ctx, config);
+        } else {
+            $scope.analysisChart2.destroy();
+            $scope.analysisChart2 = new Chart(ctx, config);
+        }
+    }
     
     $scope.updateCategoriesAnalysis = function() {
         var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd')
@@ -557,15 +587,23 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 if (response.data.status == "ok") {
                     $scope.labels = [];
                     $scope.data = [];
+                    $scope.colors1 = [];
+                    $scope.colors2 = [];
                     $scope.originData = response.data.records;
                     for (var i=0; i<$scope.originData.length; i++) {
                         var r = $scope.originData[i];
                         $scope.labels.push(r.name);
                         $scope.data.push(r.sum);
+                        var color = rivuletServ.getNextColorRGB();
+                        var color1 = "rgba("+color+", 0.5)";
+                        var color2 = "rgba("+color+", 1.0)";
+                        $scope.colors1.push(color1);
+                        $scope.colors2.push(color2);
                     }
                     // draw chart
                     if ($scope.originData.length > 0) {
                         $scope.drawChart();
+                        $scope.drawChart2();
                     }
                 } else {
                     alert(response.data.msg);
