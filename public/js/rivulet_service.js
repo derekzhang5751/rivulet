@@ -17,7 +17,7 @@ app.service('rivuletServ', function() {
         } else {
             return false;
         }
-    }
+    };
     
     this.getNextColorRGB = function() {
         var interval = 80;
@@ -48,7 +48,45 @@ app.service('rivuletServ', function() {
         }
         //console.log("Color:"+color);
         return color;
-    }
+    };
+    
+    this.getFirstDayOfMonth = function(year, month) {
+        if (typeof(year) !== "number" || typeof(month) !== "number") {
+            return "";
+        }
+        if (year <= 0 || month <= 0 || month > 12) {
+            return "";
+        }
+        var mmmm = month.toString();
+        if (mmmm.length === 1) {
+            mmmm = "0" + mmmm;
+        }
+        return year.toString() + "-" + mmmm + "-01";
+    };
+    
+    this.getLastDayOfMonth = function(year, month) {
+        if (typeof(year) !== "number" || typeof(month) !== "number") {
+            return "";
+        }
+        if (year <= 0 || month <= 0 || month > 12) {
+            return "";
+        }
+        var m = month;
+        var y = year;
+        if (month === 12) {
+            m = 1;
+            y = year + 1;
+        } else {
+            m = month + 1;
+        }
+        var date1 = new Date(y, m-1, 1);
+        var date2 = new Date(date1 - 24*60*60*1000);
+        var mmmm = (date2.getMonth() + 1).toString();
+        if (mmmm.length === 1) {
+            mmmm = "0" + mmmm;
+        }
+        return date2.getFullYear() + "-" + mmmm + "-" + date2.getDate();
+    };
     
 });
 

@@ -3,18 +3,34 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav) {
+app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav, rivuletServ) {
     $scope.username = "";
     $scope.usertype = 0;
     $scope.welcomeStat = null;
     $rootScope.subTitle = "--  Welcome";
+    $scope.searchBeginDate = "";
+    $scope.searchEndDate = "";
+    $scope.year = 2000;
+    $scope.month = "1";
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
-    }
+    };
+    
+    $scope.getColorOfDiffText = function($diff) {
+        if ($diff > 0) {
+            return "#428cf4";
+        } else if ($diff < 0) {
+            return "red";
+        } else {
+            return "#000";
+        }
+    };
     
     $scope.welcome = function() {
-        var data = "username=" + $scope.username;
+        var data = "username=" + $scope.username
+            + "&date1=" + $scope.searchBeginDate
+            + "&date2=" + $scope.searchEndDate;
         var config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -30,7 +46,34 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 console.log("Get catetory data failed!");
             }
         );
-    }
+    };
+    
+    $scope.reload = function($search) {
+        $scope.year = $search.year;
+        $scope.month = $search.month;
+
+        var firstDay = rivuletServ.getFirstDayOfMonth($scope.year, parseInt($scope.month));
+        var lastDay = rivuletServ.getLastDayOfMonth($scope.year, parseInt($scope.month));
+        //console.log("First Day:"+firstDay);
+        //console.log("Last Day:"+lastDay);
+        $scope.searchBeginDate = firstDay;
+        $scope.searchEndDate = lastDay;
+        $scope.welcome();
+    };
+    
+    var today = new Date();
+    var mm = today.getMonth();
+    var year = today.getFullYear();
+    
+    $scope.year = year;
+    $scope.month = (mm+1).toString();
+    
+    var firstDay = rivuletServ.getFirstDayOfMonth(year, mm+1);
+    var lastDay = rivuletServ.getLastDayOfMonth(year, mm+1);
+    //console.log("First Day:"+firstDay);
+    //console.log("Last Day:"+lastDay);
+    $scope.searchBeginDate = firstDay;
+    $scope.searchEndDate = lastDay;
     
     $scope.welcome();
 })
@@ -42,7 +85,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
-    }
+    };
     
     $scope.getAllCategories = function() {
         var data = "username=" + $scope.username;
@@ -61,11 +104,11 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Get catetory data failed!");
             }
         );
-    }
+    };
     
     $scope.showAddForm = function($show) {
         $scope.ifShowAddForm = $show;
-    }
+    };
     
     $scope.addCate = function($cate) {
         var data = "code="+$cate.code+"&name="+$cate.name;
@@ -77,7 +120,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         //console.log("Request getAllCatetories");
         $http.post("Home/addNewCatetory", data, config).then(
             function success(response){
-                if (response.data.status == "ok") {
+                if (response.data.status === "ok") {
                     $cate.code = "";
                     $cate.name = "";
                     $scope.showAddForm(false);
@@ -90,17 +133,17 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Add catetory failed!");
             }
         );
-    }
+    };
     
     $scope.cannel = function($cate) {
         $cate.code = "";
         $cate.name = "";
         $scope.showAddForm(false);
-    }
+    };
     
     $scope.isLevelRoot = function($cateCode) {
         return rivuletServ.isLevelRoot($cateCode);
-    }
+    };
     
     $scope.getAllCategories();
 })
@@ -119,11 +162,11 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
-    }
+    };
     
     $scope.isLevelRoot = function($cateCode) {
         return rivuletServ.isLevelRoot($cateCode);
-    }
+    };
     
     $scope.computeSum = function() {
         $scope.totalIncome = 0.0;
@@ -140,7 +183,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 }
             }
         }
-    }
+    };
     
     $scope.getTransactions = function() {
         var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd')
@@ -162,7 +205,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Get transaction data failed!");
             }
         );
-    }
+    };
     $scope.getAllCategories = function() {
         var data = "username=" + $scope.username;
         var config = {
@@ -180,7 +223,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Get catetory data failed!");
             }
         );
-    }
+    };
     
     $scope.showAddForm = function($show) {
         $scope.ifShowAddForm = $show;
@@ -188,7 +231,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         //    var el = document.getElementById('transframe');
         //    el.scrollTop = el.scrollHeight - el.height;
         //}
-    }
+    };
     
     $scope.cannel = function($trans) {
         $scope.addtrans = $trans;
@@ -198,7 +241,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         $trans.type = "-1";
         $trans.remark = "";
         $scope.showAddForm(false);
-    }
+    };
     
     $scope.addTransaction = function($trans) {
         $scope.addtrans = $trans;
@@ -217,7 +260,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         $http.post("Home/addTransaction", data, config).then(
             function success(response){
                 //console.log(response.data);
-                if (response.data.status == "ok") {
+                if (response.data.status === "ok") {
                     $trans.date = "";
                     $trans.cate = "";
                     $trans.amount = "";
@@ -233,7 +276,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Add transaction data failed!");
             }
         );
-    }
+    };
     
     $scope.getCategoryNameByCode = function($code) {
         $name = "";
@@ -245,14 +288,14 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             }
         }
         return $name;
-    }
+    };
     
     $scope.searchTransaction = function($search) {
         $scope.searchBeginDate = $search.date1;
         $scope.searchEndDate = $search.date2;
         $scope.searchCateCode = $search.cate;
         $scope.getTransactions();
-    }
+    };
     
     var today = new Date();
     var mm = today.getMonth();
@@ -271,7 +314,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
-    }
+    };
     
     $scope.computeSum = function() {
         $scope.totalBudget = 0.0;
@@ -290,7 +333,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 }
             }
         }
-    }
+    };
     
     $scope.showAlert = function(ev, title, msg) {
         $mdDialog.show(
@@ -313,7 +356,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         } else {
             return "Monthly";
         }
-    }
+    };
     
     $scope.getDesc = function($budget) {
         var amount = $budget.amount;
@@ -323,7 +366,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             amount = $budget.amount * 4.0;
         }
         return "$"+amount+" per month";
-    }
+    };
     
     $scope.getAllBudgets = function() {
         var data = "username=" + $scope.username;
@@ -343,7 +386,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Get budget data failed!");
             }
         );
-    }
+    };
     
     $scope.editBudget = function($budget) {
         //console.log("Edit Budget:");
@@ -360,7 +403,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         $http.post("Home/editBudget", data, config).then(
             function success(response){
                 //console.log(response.data);
-                if (response.data.status == "ok") {
+                if (response.data.status === "ok") {
                     $scope.getAllBudgets();
                     $scope.showAlert(event, 'Save Budget Success', '');
                 } else {
@@ -371,7 +414,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 $scope.showAlert(event, 'Save Budget Failed', 'Please try again!');
             }
         );
-    }
+    };
     
     $scope.getAllBudgets();
 })
@@ -385,11 +428,11 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
-    }
+    };
     
     $scope.isLevelRoot = function($cateCode) {
         return rivuletServ.isLevelRoot($cateCode);
-    }
+    };
     
     $scope.computeSum = function() {
         $scope.totalExpend = 0.0;
@@ -400,7 +443,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 //console.log("EXPEND: +"+trans.amount+"="+$scope.totalExpend);
             }
         }
-    }
+    };
     
     $scope.getFixedExpends = function() {
         var data = "cate=1";
@@ -420,7 +463,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Get fixed expenditure data failed!");
             }
         );
-    }
+    };
     $scope.getAllCategories = function() {
         var data = "username=" + $scope.username;
         var config = {
@@ -438,11 +481,11 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Get catetory data failed!");
             }
         );
-    }
+    };
     
     $scope.showAddForm = function($show) {
         $scope.ifShowAddForm = $show;
-    }
+    };
     
     $scope.cannel = function($trans) {
         $trans.date = "";
@@ -450,7 +493,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         $trans.amount = "";
         $trans.remark = "";
         $scope.showAddForm(false);
-    }
+    };
     
     $scope.addFixedExpend = function($trans) {
         var data = "date=" + $trans.date
@@ -466,7 +509,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         $http.post("Home/addFixedExpenditure", data, config).then(
             function success(response){
                 //console.log(response.data);
-                if (response.data.status == "ok") {
+                if (response.data.status === "ok") {
                     $trans.date = "";
                     $trans.cate = "";
                     $trans.amount = "";
@@ -482,7 +525,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Add a fixed expenditure failed!");
             }
         );
-    }
+    };
     
     $scope.getCategoryNameByCode = function($code) {
         $name = "";
@@ -494,7 +537,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             }
         }
         return $name;
-    }
+    };
     
     $scope.getAllCategories();
     $scope.getFixedExpends();
@@ -505,6 +548,8 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.ifShowAddForm = false;
     $scope.searchBeginDate = "";
     $scope.searchEndDate = "";
+    $scope.year = 2000;
+    $scope.month = "1";
     $scope.originData = null;
 
     $scope.labels = ["1", "2", "3", "4", "5", "6"];
@@ -516,7 +561,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
-    }
+    };
     
     $scope.drawChart = function() {
         var ctx = document.getElementById("analysisChart").getContext("2d");
@@ -544,7 +589,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             $scope.analysisChart.destroy();
             $scope.analysisChart = new Chart(ctx, config);
         }
-    }
+    };
     $scope.drawChart2 = function() {
         var ctx = document.getElementById("analysisChart2").getContext("2d");
         var data = {
@@ -570,11 +615,11 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             $scope.analysisChart2.destroy();
             $scope.analysisChart2 = new Chart(ctx, config);
         }
-    }
+    };
     
     $scope.updateCategoriesAnalysis = function() {
-        var data = "date1=" + $filter('date')($scope.searchBeginDate, 'yyyy-MM-dd')
-            + "&date2=" + $filter('date')($scope.searchEndDate, 'yyyy-MM-dd');
+        var data = "date1=" + $scope.searchBeginDate
+            + "&date2=" + $scope.searchEndDate;
         var config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -584,7 +629,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         $http.post("Home/updateCategoriesAnalysis", data, config).then(
             function success(response){
                 //console.log(response.data);
-                if (response.data.status == "ok") {
+                if (response.data.status === "ok") {
                     $scope.labels = [];
                     $scope.data = [];
                     $scope.colors1 = [];
@@ -613,19 +658,35 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 alert("Update catetory analysis data failed!");
             }
         );
-    }
+    };
     
     $scope.reanalyze = function($search) {
-        $scope.searchBeginDate = $search.date1;
-        $scope.searchEndDate = $search.date2;
+        $scope.year = $search.year;
+        $scope.month = $search.month;
+
+        var firstDay = rivuletServ.getFirstDayOfMonth($scope.year, parseInt($scope.month));
+        var lastDay = rivuletServ.getLastDayOfMonth($scope.year, parseInt($scope.month));
+        //console.log("First Day:"+firstDay);
+        //console.log("Last Day:"+lastDay);
+        $scope.searchBeginDate = firstDay;
+        $scope.searchEndDate = lastDay;
         $scope.updateCategoriesAnalysis();
-    }
+    };
     
     var today = new Date();
     var mm = today.getMonth();
     var year = today.getFullYear();
     
-    $scope.searchBeginDate = new Date(year, mm, 1, 0, 0, 0, 0);
+    $scope.year = year;
+    $scope.month = (mm+1).toString();
+    
+    var firstDay = rivuletServ.getFirstDayOfMonth(year, mm+1);
+    var lastDay = rivuletServ.getLastDayOfMonth(year, mm+1);
+    //console.log("First Day:"+firstDay);
+    //console.log("Last Day:"+lastDay);
+    $scope.searchBeginDate = firstDay;
+    $scope.searchEndDate = lastDay;
+    
     $scope.updateCategoriesAnalysis();
 })
 ;

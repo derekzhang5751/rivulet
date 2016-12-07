@@ -41,6 +41,8 @@ class Home extends CI_Controller {
             'records' => null
         );
         $user = $this->validateSigninUser();
+        $date1 = $this->input->post('date1');
+        $date2 = $this->input->post('date2');
         
         $this->load->model('budget_model', '', TRUE);
         $budgets = $this->budget_model->getUserValidBudget($user->user_id);
@@ -49,7 +51,7 @@ class Home extends CI_Controller {
             $stat = array();
             foreach ($budgets as $budget) {
                 $cate = $budget['code'];
-                $sum = $this->transaction_model->getUserTransSumByCate($user->user_id, substr($cate, 0, 2));
+                $sum = $this->transaction_model->getUserTransSumByCateDate($user->user_id, substr($cate, 0, 2), $date1, $date2);
                 if ($sum) {
                     $amount = $sum[0]['amount'];
                     $r = array();
@@ -66,6 +68,7 @@ class Home extends CI_Controller {
                     } else {
                         $r['actual'] = $amount;
                     }
+                    $r['diff'] = $r['budget'] + $r['actual'];
                     array_push($stat, $r);
                 }
             }

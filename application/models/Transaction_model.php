@@ -76,7 +76,7 @@ class Transaction_model extends CI_Model {
     }
     
     public function getUserTransSumByCateDate($userId, $cateMasterCode, $begin, $end) {
-        //log_message('debug', "[MODEL]Get user budget ".$userId);
+        //log_message('debug', "[MODEL]getUserTransSumByCateDate userid=".$userId.",cate=".$cateMasterCode.",date1=".$begin.",date2=".$end);
         $sql = "SELECT SUM(amount*direction) AS amount FROM transactions WHERE userid=".$userId." AND cate_code LIKE '".$cateMasterCode."%'";
         if ($begin) {
             $sql = $sql . " AND occur_time>='" . $begin . "'";
