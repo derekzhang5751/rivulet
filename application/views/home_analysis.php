@@ -7,7 +7,7 @@
                 <label>Year</label>
                 <input type="number" ng-model="search.year" ng-init="search.year=year" style="text-align: right;">
             </md-input-container>
-            <md-input-container style="width: 110px; height: 27px;">
+            <md-input-container style="width: 120px; height: 27px;">
                 <label>Month</label>
                 <md-select ng-model="search.month" ng-init="search.month=month" style="text-align: left;">
                     <md-option value="1"><em>January</em></md-option>
@@ -24,7 +24,7 @@
                     <md-option value="12"><em>December</em></md-option>
                 </md-select>
             </md-input-container>
-            &nbsp;&nbsp;<md-button type="submit" ng-click="reanalyze(search)" class="md-primary">ANALYZE</md-button>
+            <md-button type="submit" ng-click="reanalyze(search)" class="md-primary">ANALYZE</md-button>
         </form>
     </div>
     <br>
