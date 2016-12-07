@@ -6,10 +6,10 @@ and open the template in the editor.
 -->
 <div>
     <div><H1>Welcome to use Rivulet!</H1></div>
-    <div>
+    <div style="text-align: left;">
         <form name="searchForm" novalidate>
-            <h4 style="text-align: left;">Date:</h4>
-            <md-input-container style="width: 70px; height: 27px;">
+            <label style="font-weight: bold; font-size: 19px; height: 27px;">Date:</label>
+            <md-input-container style="width: 70px; height: 27px; margin-left: 20px;">
                 <label>Year</label>
                 <input type="number" ng-model="search.year" ng-init="search.year=year" style="text-align: right;">
             </md-input-container>
