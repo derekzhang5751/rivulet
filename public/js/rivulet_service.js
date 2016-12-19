@@ -88,5 +88,61 @@ app.service('rivuletServ', function() {
         return date2.getFullYear() + "-" + mmmm + "-" + date2.getDate();
     };
     
+    /**
+     * Read one record from text to a array
+     * @param {type} text
+     * @param {type} parameter, define as object {beginPos: 0, fieldSize: 6}
+     * @returns {Array}
+     */
+    this.readRecordFromCSV = function(text, parameter) {
+        var len = text.length;
+        var r = new Array();
+        var line = "";
+        if (parameter.beginPos < 0 || parameter.beginPos >= len) {
+            return r;
+        }
+        // read one line
+        do {
+            var c = text.charAt(parameter.beginPos);
+            parameter.beginPos++;
+            if (c === '\n' || c === '\r') {
+                if (parameter.beginPos < len) {
+                    c = text.charAt(parameter.beginPos);
+                    if (c !== '\n' && c !== '\r') {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                line = line + c;
+            }
+        } while (parameter.beginPos < len);
+        //console.log("Line:"+line);
+        
+        // read fields from a line
+        var split = ',';
+        var p = 0;
+        var field = "";
+        var fieldSize = 0;
+        do {
+            if (line.charAt(p) === split) {
+                r.push(field);
+                field = "";
+                fieldSize++;
+            } else {
+                field = field + line.charAt(p);
+            }
+            if (p + 1 >= line.length) {
+                r.push(field);
+                fieldSize++;
+            }
+            p++;
+        } while (p < line.length);
+        parameter.fieldSize = fieldSize;
+        
+        return r;
+    };
+    
 });
 

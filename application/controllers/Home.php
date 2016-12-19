@@ -6,7 +6,7 @@ class Home extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->library('session');
-        $this->load->helper('url');
+        $this->load->helper(array('form', 'url'));
     }
     
     private function exitResponse($response) {
@@ -205,18 +205,20 @@ class Home extends CI_Controller {
         $amount = $this->input->post('amount');
         $type = $this->input->post('type');
         $remark = $this->input->post('remark');
+        $remark = base64_decode($remark);
         if (empty($date) || empty($cate) || empty($amount) || empty($type) || empty($remark)) {
             $response['status'] = 'error';
             $response['msg'] = 'Parameter is empty!';
             $this->exitResponse($response);
         }
+        log_message('debug', "[Add Transaction]Remark=" . $remark);
         
         $trans = array(
             'userid' => $user->user_id,
-            'date' => $date,
-            'cate' => $cate,
+            'occur_time' => $date,
+            'cate_code' => $cate,
             'amount' => $amount,
-            'type' => $type,
+            'direction' => $type,
             'remark' => $remark
         );
         $this->load->model('transaction_model', '', TRUE);
@@ -225,6 +227,66 @@ class Home extends CI_Controller {
             $response['msg'] = 'Database error!';
             $this->exitResponse($response);
         }
+        $this->exitResponse($response);
+    }
+    
+    private function addArrayTransaction($userId, $trans) {
+        if (empty($trans['occur_time']) || empty($trans['cate_code']) || empty($trans['amount']) || empty($trans['remark'])) {
+            return false;
+        }
+        
+        $type = -1;
+        if ($trans['amount'] > 0) {
+            $type = 1;
+        } else {
+            $trans['amount'] = 0 - $trans['amount'];
+        }
+        $data = array(
+            'userid' => $userId,
+            'occur_time' => $trans['occur_time'],
+            'cate_code' => $trans['cate_code'],
+            'amount' => $trans['amount'],
+            'direction' => $type,
+            'remark' => $trans['remark']
+        );
+        $this->load->model('transaction_model', '', TRUE);
+        if ($this->transaction_model->existTransaction($data) == false) {
+            if ($this->transaction_model->addTransaction($data) == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public function uploadTransactions() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'records' => null
+        );
+        $user = $this->validateSigninUser();
+        
+        $rawData = file_get_contents('php://input');
+        //log_message('debug', 'Upload:'.$rawData);
+        $json = json_decode($rawData, TRUE);
+        $num = count($json);
+        //log_message('debug', "num:$num");
+        if ($num > 0) {
+            $response['records'] = array();
+        }
+        for ($i=0; $i<$num; $i++) {
+            //log_message('debug', 'INDEX $i:' . $json[$i]['item']);
+            //log_message('debug', 'INDEX $i:'.$json[$i]['item'].'-'.$json[$i]['occur_time'].'-'.$json[$i]['cate_code'].'-'.$json[$i]['amount'].'-'.$json[$i]['remark'].'-'.$json[$i]['uploaded']);
+            $success = false;
+            if ($json[$i]['cate_code'] !== "0000") {
+                $success = $this->addArrayTransaction($user->user_id, $json[$i]);
+            }
+            $response['records'][$i] = array(
+                'item' => $json[$i]['item'],
+                'uploaded' => $success
+            );
+        }
+        
         $this->exitResponse($response);
     }
     
@@ -383,6 +445,46 @@ class Home extends CI_Controller {
         $response['records'] = $list;
 
         $this->exitResponse($response);
+    }
+    
+    public function to_upload() {
+        $data['page'] = 'to_upload';
+        $data['error'] = "";
+        $data['upload_data'] = array();
+        //$upload_data
+        $this->load->view('home_import_trans', $data);
+    }
+    
+    private function buildUserUploadFileName($userId) {
+        if (empty($userId)) {
+            return "trans_000.csv";
+        } else {
+            return "trans_".$userId.".csv";
+        }
+    }
+
+    public function do_upload() {
+        $user = $this->validateSigninUser();
+        
+        $data['page'] = 'do_upload';
+        $data['error'] = '';
+        $data['upload_data'] = array();
+        
+        $config['upload_path'] = './trans_csv/';
+        $config['allowed_types'] = 'csv';
+        $config['file_name'] = $this->buildUserUploadFileName($user->user_id);
+        $config['overwrite'] = TRUE;
+        $config['max_size'] = 2048;
+        
+        $this->load->library('upload', $config);
+        
+        if ($this->upload->do_upload('userfile')) {
+            $data['upload_data'] = $this->upload->data();
+        } else {
+            $data['error'] = $this->upload->display_errors();
+        }
+        
+        $this->load->view('home_import_trans', $data);
     }
     
 }

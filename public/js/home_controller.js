@@ -250,13 +250,13 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             + "&cate=" + $trans.cate
             + "&amount=" + $trans.amount
             + "&type=" + $trans.type
-            + "&remark=" + $trans.remark;
+            + "&remark=" + btoa($trans.remark);
         var config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         };
-        //console.log("Request getAllCatetories");
+        //console.log("Request add transaction:data=" + data);
         $http.post("Home/addTransaction", data, config).then(
             function success(response){
                 //console.log(response.data);
@@ -688,5 +688,190 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.searchEndDate = lastDay;
     
     $scope.updateCategoriesAnalysis();
+})
+
+.controller('homeImportTransCtrl', function($scope, $rootScope, $http, rivuletServ, $mdSidenav) {
+    $rootScope.subTitle = "-- Import Transactions";
+    $scope.disableLoad = false;
+    $scope.disableImport = true;
+    $scope.message = "Please select a csv file";
+    $scope.fileContent = "";
+    $scope.transactions = [];
+    $scope.categories = null;
+    $scope.cardType = "CREDIT";
+    
+    $rootScope.openLeftMenu = function() {
+        $mdSidenav('left').toggle();
+    };
+    
+    $scope.isLevelRoot = function($cateCode) {
+        return rivuletServ.isLevelRoot($cateCode);
+    };
+    
+    $scope.isSelected = function($code1, $code2) {
+        if ($code1 == $code2) {
+            return "selected";
+        } else {
+            return "";
+        }
+    };
+    
+    $scope.transRowStyle = function($uploaded) {
+        if ($uploaded) {
+            //return "'font-style: normal; font-weight: normal;'";
+            return {"font-style": "normal", "font-weight": "normal"};
+        } else {
+            //return "'font-style: italic; font-weight: bold;'";
+            return {"font-style": "italic", "font-weight": "bold"};
+        }
+    };
+    
+    $scope.getCategoryNameByCode = function($code) {
+        $name = "";
+        for (var i=0; i<$scope.categories.length; i++) {
+            var cat = $scope.categories[i];
+            if (cat.code == $code) {
+                $name = cat.name;
+                break;
+            }
+        }
+        return $name;
+    };
+    
+    $scope.getAllCategories = function() {
+        var data = "username=" + $scope.username;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request getAllCatetories");
+        $http.post("Home/getAllCategories", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                $scope.categories = response.data.records;
+                var r = [];
+                r['id'] = 0;
+                r['code'] = "0000";
+                r['name'] = "Not Import";
+                $scope.categories.push(r);
+            },
+            function error(response){
+                alert("Get catetory data failed!");
+            }
+        );
+    };
+    
+    $scope.openTransFile = function(event) {
+        var f = event.target.files[0];
+        //console.log("Load Transactions From CSV");
+        //console.log("From: "+f.name);
+        
+        var reader = new FileReader();
+        reader.onload = function() {
+            //console.log("Onload:");
+            $scope.fileContent = reader.result;
+            //console.log($scope.fileContent);
+        };
+        reader.readAsText(f);
+    };
+    $scope.formatDate = function(date) {
+        // 20161020
+        var ret = "";
+        if (date.length === 8) {
+            ret = date.substring(0, 4) + "-";
+            ret = ret + date.substring(4, 6) + "-";
+            ret = ret + date.substring(6, 8);
+        } else {
+            ret = date;
+        }
+        return ret;
+    };
+    $scope.formatAmount = function(amount) {
+        var ret = parseFloat(amount);
+        if ($scope.cardType === "CREDIT") {
+            ret = 0 - ret;
+        }
+        return ret;
+    };
+    $scope.loadTrans = function() {
+        var obj = {
+            beginPos: 0,
+            fieldSize: 6
+        };
+        var index = 0;
+        $scope.transactions = [];
+        while (obj.fieldSize === 6) {
+            var r = rivuletServ.readRecordFromCSV($scope.fileContent, obj);
+            //console.log("BeginPos="+obj.beginPos+", FieldSize="+obj.fieldSize);
+            if (obj.fieldSize === 6) {
+                index++;
+                if (index > 1) {
+                    $scope.transactions[index-2] = {};
+                    //console.log(r[0]+"    "+r[2]+"    "+r[4]+"    "+r[5]);
+                    $scope.transactions[index-2].item = r[0];
+                    $scope.transactions[index-2].occur_time = $scope.formatDate(r[2]);
+                    $scope.transactions[index-2].cate_code = "0000"; //9900;
+                    $scope.transactions[index-2].amount = $scope.formatAmount(r[4]);
+                    $scope.transactions[index-2].remark = r[5];
+                    $scope.transactions[index-2].uploaded = false;
+                }
+            }
+            if (obj.beginPos === $scope.fileContent.length) {
+                obj.fieldSize = 0;
+            } else {
+                obj.fieldSize = 6;
+            }
+        }
+        //console.log($scope.transactions);
+        if ($scope.transactions.length > 0) {
+            $scope.disableImport = false;
+        } else {
+            $scope.disableImport = true;
+        }
+    };
+    
+    $scope.uploadTrans = function() {
+        if ($scope.transactions.length <= 0) {
+            alert("No data to upload!");
+            return;
+        }
+        var jsonData = JSON.stringify($scope.transactions);
+        //console.log(jsonData);
+        var data = jsonData;
+        var config = {
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        };
+        $http.post("Home/uploadTransactions", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                if (response.data.status === "ok") {
+                    for (var i=0; i<response.data.records.length; i++) {
+                        $scope.transactions[i].uploaded = response.data.records[i].uploaded;
+                    }
+                    alert("Import transactions completed!");
+                } else  {
+                    alert("Upload transactions failed: " + response.data.msg);
+                }
+            },
+            function error(response){
+                alert("Upload transactions failed!");
+            }
+        );
+    };
+    
+    document.getElementById("csvFileName").onchange = $scope.openTransFile;
+    
+    if ( window.FileReader && window.File && window.FileList && window.Blob ) {
+        $scope.disableLoad = false;
+        $scope.message = "Please select a csv file";
+    } else {
+        $scope.disableLoad = true;
+        $scope.message = "Your browser does not support import!";
+    }
+    
+    $scope.getAllCategories();
 })
 ;

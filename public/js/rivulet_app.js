@@ -27,6 +27,10 @@ app.config(function($routeProvider){
         templateUrl: "/Home/page/home_analysis",
         controller: "analysisCtrl"
     })
+    .when("/importtrans", {
+        templateUrl: "/Home/page/home_import_trans",
+        controller: "homeImportTransCtrl"
+    })
     .otherwise({
         templateUrl: "/Home/page/home_welcome",
         controller: "homeWelcomeCtrl"

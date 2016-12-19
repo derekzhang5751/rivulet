@@ -48,17 +48,38 @@ class Transaction_model extends CI_Model {
         return $trans;
     }
     
+    public function existTransaction($trans) {
+        $where = array(
+            'userid' => $trans['userid'],
+            'occur_time' => $trans['occur_time'],
+            //'cate_code' => $trans['cate_code'],
+            'amount' => $trans['amount'],
+            'direction' => $trans['direction'],
+            'remark' => $trans['remark']
+        );
+        $this->db->select('id');
+        $this->db->where($where);
+        $count = $this->db->count_all_results('transactions');
+        //$message = "[EXIST " . $trans['userid'] . ", " . $trans['remark'] . "]=" . $count;
+        //log_message('debug', $message);
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public function addTransaction($trans) {
         $data = array(
             'userid' => $trans['userid'],
-            'occur_time' => $trans['date'],
-            'cate_code' => $trans['cate'],
+            'occur_time' => $trans['occur_time'],
+            'cate_code' => $trans['cate_code'],
             'amount' => $trans['amount'],
-            'direction' => $trans['type'],
+            'direction' => $trans['direction'],
             'remark' => $trans['remark']
         );
         $ret = $this->db->insert('transactions', $data);
-        //$message = "[INSERT " .$trans['userid']. "," .$trans['date']. "," .$trans['cate']. "," .$trans['amount']. "," .$trans['type']. "," .$trans['remark']. "]=" . $ret;
+        //$message = "[INSERT " .$data['userid']. "," .$data['occur_time']. "," .$data['cate_code']. "," .$data['amount']. "," .$data['direction']. "," .$data['remark']. "]=" . $ret;
         //log_message('debug', $message);
         if ($ret) {
             return true;

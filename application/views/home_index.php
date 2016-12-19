@@ -25,6 +25,7 @@ and open the template in the editor.
                         <li><a href="#budget" ng-click="openLeftMenu()">&nbsp;&nbsp;Budget</a></li>
                         <li><a href="#fixedexpenditure" ng-click="openLeftMenu()">&nbsp;&nbsp;Fixed Expenditure</a></li>
                         <li><a href="#analysis" ng-click="openLeftMenu()">&nbsp;&nbsp;Analysis</a></li>
+                        <li><a href="#importtrans" ng-click="openLeftMenu()">&nbsp;&nbsp;Import Transactions</a></li>
                         <li><a href="http://rivulet/User/signOut" ng-click="openLeftMenu()">&nbsp;&nbsp;Sign out</a></li>
                     </ul>
                 </md-content>

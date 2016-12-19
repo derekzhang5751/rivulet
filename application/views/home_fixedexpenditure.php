@@ -3,7 +3,7 @@
     <table style="width: 100%;">
         <tr style="background-color: #428cf4; color: #fff;">
             <td style="width: 10%; text-align: center;">ID</td>
-            <td style="width: 10%; text-align: center;">OCCUR TIME</td>
+            <td style="width: 10%; text-align: center;">OCCUR DATE</td>
             <td style="width: 30%; text-align: center;">CATEGORY</td>
             <td style="width: 15%; text-align: center;" align="right">AMOUNT</td>
             <td style="width: 35%; text-align: center;">REMARK</td>
