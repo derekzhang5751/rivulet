@@ -88,8 +88,8 @@ class Transaction_model extends CI_Model {
         }
     }
     
-    public function deleteTransaction($tranId) {
-        $sql = "DELETE FROM transactions WHERE id=" . $tranId;
+    public function deleteTransaction($userId, $tranId) {
+        $sql = "DELETE FROM transactions WHERE id=" . $tranId . " AND userid=" . $userId;
         $ret = $this->db->query($sql);
         if ($ret) {
             return true;

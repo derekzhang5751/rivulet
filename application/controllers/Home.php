@@ -283,7 +283,7 @@ class Home extends CI_Controller {
         //log_message('debug', "[Add Transaction]Remark=" . $remark);
         
         $this->load->model('transaction_model', '', TRUE);
-        if ($this->transaction_model->deleteTransaction($tranId) == false) {
+        if ($this->transaction_model->deleteTransaction($user->user_id, $tranId) == false) {
             $response['status'] = 'error';
             $response['msg'] = 'Database error!';
             $this->exitResponse($response);
