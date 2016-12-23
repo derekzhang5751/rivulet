@@ -19,13 +19,27 @@
     </div>
     <br>
     <table style="width: 100%;">
+        <tr style="background-color: #428cf4; color: #fff;">
+            <td style="width: 5%; text-align: center;">ITEM</td>
+            <td style="width: 15%; text-align: center;">DATE</td>
+            <td style="width: 23%; text-align: center;">CATEGORY</td>
+            <td style="width: 10%; text-align: center;" align="right">AMOUNT</td>
+            <td style="width: 10%; text-align: center;">TYPE</td>
+            <td style="width: 30%; text-align: center;">REMARK</td>
+            <td style="width: 7%; text-align: center;">
+                <md-switch ng-model="enableDelete" aria-label="delete" style="min-height: 10px; height: 10px; margin-left: 18px;"></md-switch>
+            </td>
+        </tr>
         <tr ng-repeat="r in transactions">
-            <td style="width: 5%;">{{ $index+1 }}</td>
-            <td style="width: 15%;">{{ r.occur_time }}</td>
-            <td style="width: 28%;">{{ getCategoryNameByCode(r.cate_code) }}</td>
-            <td style="width: 12%;" align="right">{{ r.direction>0 ? r.amount : '-'+r.amount }}</td>
-            <td style="width: 10%;" align="center">{{ r.direction>0 ? 'Income' : 'Expend' }}</td>
-            <td style="width: 30%;">{{ r.remark }}</td>
+            <td style="text-align: center;">{{ $index+1 }}</td>
+            <td style="text-align: center;">{{ r.occur_time }}</td>
+            <td style="text-align: center;">{{ getCategoryNameByCode(r.cate_code) }}</td>
+            <td style="text-align: right;">{{ r.direction>0 ? r.amount : '-'+r.amount }}</td>
+            <td style="text-align: center;">{{ r.direction>0 ? 'Income' : 'Expend' }}</td>
+            <td style="text-align: center;">{{ r.remark }}</td>
+            <td style="text-align: center;">
+        <md-button type="button" class="md-warn" ng-disabled="!enableDelete" ng-click="delTranConfirm(event, r.id, r.remark)" style="min-width: 40px; font-size: 13px">Delete</md-button>
+            </td>
         </tr>
     </table>
     <div style="text-align: right;">

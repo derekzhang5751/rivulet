@@ -88,6 +88,16 @@ class Transaction_model extends CI_Model {
         }
     }
     
+    public function deleteTransaction($tranId) {
+        $sql = "DELETE FROM transactions WHERE id=" . $tranId;
+        $ret = $this->db->query($sql);
+        if ($ret) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public function getUserTransSumByCate($userId, $cateMasterCode) {
         //log_message('debug', "[MODEL]Get user budget ".$userId);
         $sql = "SELECT SUM(amount*direction) AS amount FROM transactions WHERE userid=".$userId." AND cate_code LIKE '".$cateMasterCode."%'";

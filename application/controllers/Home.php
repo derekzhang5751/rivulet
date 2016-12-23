@@ -267,6 +267,30 @@ class Home extends CI_Controller {
         $this->exitResponse($response);
     }
     
+    public function deleteTransaction() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => ''
+        );
+        $user = $this->validateSigninUser();
+        
+        $tranId = $this->input->post('id');
+        if (empty($tranId)) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Parameter is empty!';
+            $this->exitResponse($response);
+        }
+        //log_message('debug', "[Add Transaction]Remark=" . $remark);
+        
+        $this->load->model('transaction_model', '', TRUE);
+        if ($this->transaction_model->deleteTransaction($tranId) == false) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Database error!';
+            $this->exitResponse($response);
+        }
+        $this->exitResponse($response);
+    }
+    
     private function addArrayTransaction($userId, $trans) {
         if (empty($trans['occur_time']) || empty($trans['cate_code']) || empty($trans['amount']) || empty($trans['remark'])) {
             return false;

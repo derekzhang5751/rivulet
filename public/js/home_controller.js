@@ -213,7 +213,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.getAllCategories();
 })
 
-.controller('homeTransCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav) {
+.controller('homeTransCtrl', function($scope, $rootScope, $http, $filter, rivuletServ, $mdSidenav, $mdDialog) {
     $rootScope.subTitle = "-- Transaction";
     $scope.ifShowAddForm = false;
     $scope.searchBeginDate = "";
@@ -224,6 +224,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.totalIncome = 0.0;
     $scope.totalExpend = 0.0;
     $scope.addtrans = null;
+    $scope.enableDelete = false;
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
@@ -339,6 +340,48 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
             },
             function error(response){
                 alert("Add transaction data failed!");
+            }
+        );
+    };
+    
+    $scope.delTranConfirm = function(ev, $id, $remark) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var content = "ITEM: " + $remark;
+        var confirm = $mdDialog.confirm()
+            .title(content)
+            .textContent('Would you like to delete this transaction? It would not be restored !')
+            .ariaLabel('Delete tip')
+            .targetEvent(ev)
+            .ok('Delete')
+            .cancel('Cannel');
+
+        $mdDialog.show(confirm).then(function() {
+            $scope.delTran($id);
+        }, function() {
+            //
+        });
+    };
+    
+    $scope.delTran = function($id) {
+        //console.log("Delete transaction: " + $id);
+        var data = "id=" + $id;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request add transaction:data=" + data);
+        $http.post("Home/deleteTransaction", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                if (response.data.status === "ok") {
+                    $scope.getTransactions();
+                } else {
+                    alert(response.data.msg);
+                }
+            },
+            function error(response){
+                alert("Delete transaction failed!");
             }
         );
     };
