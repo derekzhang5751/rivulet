@@ -34,16 +34,50 @@ class Home extends CI_Controller {
         $this->load->view($pageName, NULL);
     }
     
+    private function getFixedExpendWhichNotApplied($userId, $date1) {
+        $ret = array();
+        $search = array(
+            'userid' => $userId
+        );
+        
+        // return result
+        $this->load->model('fixedexpends_model', '', TRUE);
+        $trans = $this->fixedexpends_model->getFixedExpends($search);
+        for ($i=0; $i<count($trans); $i++) {
+            $day = $trans[$i]['occur_time'];
+            if (strlen($day) == 1) {
+                $trans[$i]['occur_time'] = substr($date1, 0, 8) . "0" . $day;
+            } else {
+                $trans[$i]['occur_time'] = substr($date1, 0, 8) . $day;
+            }
+            //log_message('debug', $trans[$i]['occur_time']);
+            $row = array(
+                'userid' => $userId,
+                'occur_time'=> $trans[$i]['occur_time'],
+                'cate_code'=> $trans[$i]['cate_code'],
+                'amount'=> $trans[$i]['amount'],
+                'direction' => -1,
+                'remark'=> $trans[$i]['remark'],
+            );
+            if ($this->transaction_model->existTransaction($row) == false) {
+                array_push($ret, $row);
+            }
+        }
+        return $ret;
+    }
+    
     public function welcome() {
         $response = array(
             'status' => 'ok',
             'msg' => '',
-            'records' => null
+            'records' => null,
+            'fixedtrans' => null
         );
         $user = $this->validateSigninUser();
         $date1 = $this->input->post('date1');
         $date2 = $this->input->post('date2');
         
+        // Budget Part
         $this->load->model('budget_model', '', TRUE);
         $budgets = $this->budget_model->getUserValidBudget($user->user_id);
         if ($budgets) {
@@ -74,6 +108,9 @@ class Home extends CI_Controller {
             }
             $response['records'] = $stat;
         }
+        
+        // Fixed Expensure Part
+        $response['fixedtrans'] = $this->getFixedExpendWhichNotApplied($user->user_id, $date1);
         
         $this->exitResponse($response);
     }
@@ -211,7 +248,7 @@ class Home extends CI_Controller {
             $response['msg'] = 'Parameter is empty!';
             $this->exitResponse($response);
         }
-        log_message('debug', "[Add Transaction]Remark=" . $remark);
+        //log_message('debug', "[Add Transaction]Remark=" . $remark);
         
         $trans = array(
             'userid' => $user->user_id,
@@ -342,7 +379,7 @@ class Home extends CI_Controller {
         $id = $this->input->post('id');
         $amount = $this->input->post('amount');
         $period = $this->input->post('period');
-        log_message('debug', "[CONTROLLER]Edit Budget: user=".$user->user_id."-id=".$id."-amount=".$amount."-period=".$period);
+        //log_message('debug', "[CONTROLLER]Edit Budget: user=".$user->user_id."-id=".$id."-amount=".$amount."-period=".$period);
         if (empty($id) || !isset($amount) || !isset($period) || !is_numeric($amount) || !is_numeric($period)) {
             $response['status'] = 'error';
             $response['msg'] = 'Parameter is empty!';
@@ -409,6 +446,50 @@ class Home extends CI_Controller {
             $response['msg'] = 'Database error!';
             $this->exitResponse($response);
         }
+        $this->exitResponse($response);
+    }
+    
+    public function applyFixedExpend() {
+        $response = array(
+            'status' => 'ok',
+            'msg' => '',
+            'fixedtrans' => null
+        );
+        $user = $this->validateSigninUser();
+        $date1 = $this->input->post('date1');
+        //$date2 = $this->input->post('date2');
+        
+        $date = $this->input->post('occur_time');
+        $cate = $this->input->post('cate_code');
+        $amount = $this->input->post('amount');
+        $remark = $this->input->post('remark');
+        $remark = base64_decode($remark);
+        if (empty($date) || empty($cate) || empty($amount) || empty($remark)) {
+            $response['status'] = 'error';
+            $response['msg'] = 'Parameter is empty!';
+            $this->exitResponse($response);
+        }
+        //log_message('debug', "[Add Transaction]Remark=" . $remark);
+        
+        $trans = array(
+            'userid' => $user->user_id,
+            'occur_time' => $date,
+            'cate_code' => $cate,
+            'amount' => $amount,
+            'direction' => -1,
+            'remark' => $remark
+        );
+        $this->load->model('transaction_model', '', TRUE);
+        if ($this->transaction_model->existTransaction($trans) === false) {
+            if ($this->transaction_model->addTransaction($trans) === false) {
+                $response['status'] = 'error';
+                $response['msg'] = 'Database error!';
+                $this->exitResponse($response);
+            }
+        }
+        // Refresh fixed expensure
+        $response['fixedtrans'] = $this->getFixedExpendWhichNotApplied($user->user_id, $date1);
+        
         $this->exitResponse($response);
     }
     

@@ -3,11 +3,16 @@
     <h4>{{message}}</h4>
     <table style="border: none; width: 100%;">
     <tr>
-        <td style="border: none;"><input type="file" id="csvFileName" name="csvFileName" /></td>
+        <td style="border: none; width: 40%;"><input type="file" id="csvFileName" name="csvFileName" /></td>
+        <td style="border: none;">
+            <p>Bank:</p>
+            <md-radio-group ng-model="bank" class="md-primary">
+                <md-radio-button value="BMO">BMO</md-radio-button>
+                <md-radio-button value="RBC">RBC</md-radio-button>
+            </md-radio-group>
+        </td>
         <td style="border: none;">
             <p>Card Type:</p>
-            <!--input type="radio" name="cardType" value="CREDIT" ng-model="cardType" />&nbsp;CREDIT<br-->
-            <!--input type="radio" name="cardType" value="DEBIT" ng-model="cardType" />&nbsp;&nbsp;DEBIT-->
             <md-radio-group ng-model="cardType" class="md-primary">
                 <md-radio-button value="CREDIT">CREDIT</md-radio-button>
                 <md-radio-button value="DEBIT">&nbsp;DEBIT</md-radio-button>

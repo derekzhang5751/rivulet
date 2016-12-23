@@ -6,7 +6,9 @@
 app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav, rivuletServ) {
     $scope.username = "";
     $scope.usertype = 0;
+    $scope.categories = "";
     $scope.welcomeStat = null;
+    $scope.fixedTrans = null;
     $rootScope.subTitle = "--  Welcome";
     $scope.searchBeginDate = "";
     $scope.searchEndDate = "";
@@ -27,6 +29,67 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         }
     };
     
+    $scope.getCategoryNameByCode = function($code) {
+        $name = "";
+        for (var i=0; i<$scope.categories.length; i++) {
+            var cat = $scope.categories[i];
+            if (cat.code == $code) {
+                $name = cat.name;
+                break;
+            }
+        }
+        return $name;
+    };
+    $scope.getAllCategories = function() {
+        var data = "username=" + $scope.username;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log("Request getAllCatetories");
+        $http.post("Home/getAllCategories", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                $scope.categories = response.data.records;
+            },
+            function error(response){
+                alert("Get catetory data failed!");
+            }
+        );
+    };
+    
+    $scope.applyFixedExpend = function($expend) {
+        //console.log("Edit Budget:");
+        //console.log($expend);
+        var data = "occur_time=" + $expend.occur_time
+            + "&cate_code=" + $expend.cate_code
+            + "&amount=" + $expend.amount
+            + "&remark=" + btoa($expend.remark)
+            + "&date1=" + $scope.searchBeginDate
+            + "&date2=" + $scope.searchEndDate;
+        var config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        //console.log(data);
+        $http.post("Home/applyFixedExpend", data, config).then(
+            function success(response){
+                //console.log(response.data);
+                if (response.data.status === "ok") {
+                    $scope.fixedTrans = response.data.fixedtrans;
+                    alert('Apply transaction success!');
+                } else {
+                    alert('Apply transaction failed:'+response.data.msg);
+                }
+            },
+            function error(response){
+                alert('Apply transaction failed, Please try again!');
+            }
+        );
+    };
+    
     $scope.welcome = function() {
         var data = "username=" + $scope.username
             + "&date1=" + $scope.searchBeginDate
@@ -36,14 +99,15 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         };
-        //console.log("Request getAllCatetories");
+        //console.log("Request welcome data.");
         $http.post("Home/welcome", data, config).then(
             function success(response){
                 //console.log(response.data);
                 $scope.welcomeStat = response.data.records;
+                $scope.fixedTrans = response.data.fixedtrans;
             },
             function error(response){
-                console.log("Get catetory data failed!");
+                console.log("Get welcome data failed!");
             }
         );
     };
@@ -75,6 +139,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.searchBeginDate = firstDay;
     $scope.searchEndDate = lastDay;
     
+    $scope.getAllCategories();
     $scope.welcome();
 })
 
@@ -699,6 +764,7 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
     $scope.transactions = [];
     $scope.categories = null;
     $scope.cardType = "CREDIT";
+    $scope.bank = "BMO";
     
     $rootScope.openLeftMenu = function() {
         $mdSidenav('left').toggle();
@@ -775,54 +841,16 @@ app.controller('homeWelcomeCtrl', function($scope, $rootScope, $http, $mdSidenav
         };
         reader.readAsText(f);
     };
-    $scope.formatDate = function(date) {
-        // 20161020
-        var ret = "";
-        if (date.length === 8) {
-            ret = date.substring(0, 4) + "-";
-            ret = ret + date.substring(4, 6) + "-";
-            ret = ret + date.substring(6, 8);
-        } else {
-            ret = date;
-        }
-        return ret;
-    };
-    $scope.formatAmount = function(amount) {
-        var ret = parseFloat(amount);
-        if ($scope.cardType === "CREDIT") {
-            ret = 0 - ret;
-        }
-        return ret;
-    };
+    
     $scope.loadTrans = function() {
-        var obj = {
-            beginPos: 0,
-            fieldSize: 6
-        };
-        var index = 0;
-        $scope.transactions = [];
-        while (obj.fieldSize === 6) {
-            var r = rivuletServ.readRecordFromCSV($scope.fileContent, obj);
-            //console.log("BeginPos="+obj.beginPos+", FieldSize="+obj.fieldSize);
-            if (obj.fieldSize === 6) {
-                index++;
-                if (index > 1) {
-                    $scope.transactions[index-2] = {};
-                    //console.log(r[0]+"    "+r[2]+"    "+r[4]+"    "+r[5]);
-                    $scope.transactions[index-2].item = r[0];
-                    $scope.transactions[index-2].occur_time = $scope.formatDate(r[2]);
-                    $scope.transactions[index-2].cate_code = "0000"; //9900;
-                    $scope.transactions[index-2].amount = $scope.formatAmount(r[4]);
-                    $scope.transactions[index-2].remark = r[5];
-                    $scope.transactions[index-2].uploaded = false;
-                }
-            }
-            if (obj.beginPos === $scope.fileContent.length) {
-                obj.fieldSize = 0;
-            } else {
-                obj.fieldSize = 6;
-            }
+        if ("BMO" === $scope.bank) {
+            $scope.transactions = rivuletServ.readTransListFromBMOCSV($scope.fileContent, $scope.cardType);
+        } else if ("RBC" === $scope.bank) {
+            $scope.transactions = [];//rivuletServ.readTransListFromRBCCSV($scope.fileContent, $scope.cardType);
+        } else {
+            $scope.transactions = [];
         }
+        
         //console.log($scope.transactions);
         if ($scope.transactions.length > 0) {
             $scope.disableImport = false;

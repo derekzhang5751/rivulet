@@ -52,4 +52,38 @@ and open the template in the editor.
             </tr>
         </table>
     </div>
+    <br>
+    <div style="text-align: left;" ng-show="fixedTrans.length>0">
+        <h4>You have something to do !</h4>
+        <table style="width: 100%;">
+            <tr style="background-color: #428cf4; color: #fff;"><td>
+                <table class="budgettable1"><tr>
+                    <td style="width: 15%; text-align: center">DATE</td>
+                    <td style="width: 30%; text-align: center">CATEGORY</td>
+                    <td style="width: 10%; text-align: center">AMOUNT</td>
+                    <td style="width: 35%; text-align: center">REMARK</td>
+                    <td style="width: 10%; text-align: center"></td>
+                </tr></table>
+            </td></tr>
+            <tr ng-repeat="r in fixedTrans" ng-form="editForm"><td style="background-color: #fff;">
+                <form name="editForm" ng-submit="applyFixedExpend(expend)"><table class="budgettable2"><tr>
+                    <td style="width: 15%; text-align: center;">
+                        <input type="text" name="expenddate" ng-model="expend.occur_time" ng-init="expend.occur_time=r.occur_time" style="text-align: center; left: 100px; width: 100%; border-width: 0px;" disabled="true">
+                    </td>
+                    <td style="width: 30%; text-align: center;">{{ getCategoryNameByCode(r.cate_code) }}
+                        <input type="text" hidden="true" name="expendcate" ng-model="expend.cate_code" ng-init="expend.cate_code=r.cate_code" style="text-align: center; width: 100%; border-width: 0px;" disabled="true">
+                    </td>
+                    <td style="width: 10%; text-align: center;">
+                        <input type="text" name="expendamount" ng-model="expend.amount" ng-init="expend.amount=r.amount" style="text-align: right; width: 100%; border-width: 0px;" disabled="true">
+                    </td>
+                    <td style="width: 35%; text-align: center;">
+                        <input type="text" name="expendremark" ng-model="expend.remark" ng-init="expend.remark=r.remark" style="text-align: center; width: 100%; border-width: 0px;" disabled="true">
+                    </td>
+                    <td style="width: 10%; text-align: center;">
+                        <md-button type="submit" class="md-warn">APPLY</md-button>
+                    </td>
+                </tr></table></form>
+            </td></tr>
+        </table>
+    </div>
 </div>

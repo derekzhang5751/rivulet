@@ -89,10 +89,10 @@ app.service('rivuletServ', function() {
     };
     
     /**
-     * Read one record from text to a array
-     * @param {type} text
+     * @syntax readRecordFromCSV() Read one record from text to a array
+     * @param {type} text, raw text as csv format
      * @param {type} parameter, define as object {beginPos: 0, fieldSize: 6}
-     * @returns {Array}
+     * @returns {Array}, return all fields in the row.
      */
     this.readRecordFromCSV = function(text, parameter) {
         var len = text.length;
@@ -142,6 +142,143 @@ app.service('rivuletServ', function() {
         parameter.fieldSize = fieldSize;
         
         return r;
+    };
+    
+    this.formatBMODate = function(date) {
+        // 20161020
+        var ret = false;
+        if (date.length === 8) {
+            ret = date.substring(0, 4) + "-";
+            ret = ret + date.substring(4, 6) + "-";
+            ret = ret + date.substring(6, 8);
+        } else {
+            ret = false;
+        }
+        return ret;
+    };
+    this.formatBMOAmount = function(amount, isCredit) {
+        var ret = parseFloat(amount);
+        if (isCredit) {
+            ret = 0 - ret;
+        }
+        return ret;
+    };
+    this.formatBMORemark = function(remark) {
+        var ret = remark;
+        if (remark.length > 43) {
+            ret = remark.substring(0, 42);
+        }
+        return ret;
+    };
+    this.readTransListFromBMOCSV = function(csvText, cardType) {
+        var transactions = [];
+        var skipRowCount = 0;
+        var fieldCount = 100;
+        var dateIndex = 0;
+        var amountIndex = 0;
+        var remarkIndex = 0;
+        var isCredit = true;
+
+        if ("DEBIT" === cardType) {
+            // DEBIT
+            isCredit = false;
+            skipRowCount = 6;
+            fieldCount = 5;
+            dateIndex = 2;
+            amountIndex = 3;
+            remarkIndex = 4;
+        } else {
+            // CREDIT
+            isCredit = true;
+            skipRowCount = 3;
+            fieldCount = 6;
+            dateIndex = 2;
+            amountIndex = 4;
+            remarkIndex = 5;
+        }
+        
+        var obj = {
+            beginPos: 0,
+            fieldSize: fieldCount
+        };
+        var index = 0;
+        while (obj.fieldSize === fieldCount) {
+            var r = this.readRecordFromCSV(csvText, obj);
+            //console.log("BeginPos="+obj.beginPos+", FieldSize="+obj.fieldSize);
+            if (obj.fieldSize === fieldCount) {
+                index++;
+                if (index > skipRowCount) {
+                    transactions[index-skipRowCount-1] = {};
+                    //console.log(r[0]+"    "+r[dateIndex]+"    "+r[amountIndex]+"    "+r[remarkIndex]);
+                    transactions[index-skipRowCount-1].item = index - skipRowCount;
+                    transactions[index-skipRowCount-1].occur_time = this.formatBMODate( r[dateIndex] );
+                    transactions[index-skipRowCount-1].cate_code = "0000";
+                    transactions[index-skipRowCount-1].amount = this.formatBMOAmount( r[amountIndex], isCredit );
+                    transactions[index-skipRowCount-1].remark = this.formatBMORemark( r[remarkIndex] );
+                    transactions[index-skipRowCount-1].uploaded = false;
+                }
+            }
+            if (obj.beginPos === csvText.length) {
+                obj.fieldSize = 0;
+            } else {
+                obj.fieldSize = fieldCount;
+            }
+        }
+        return transactions;
+    };
+    
+    this.readTransListFromRBCCSV = function(csvText, cardType) {
+        var transactions = [];
+        var fieldCount = 100;
+        var dateIndex = 0;
+        var amountIndex = 0;
+        var remarkIndex = 0;
+        var isCredit = true;
+
+        if ("DEBIT" === cardType) {
+            // DEBIT
+            isCredit = false;
+            fieldCount = 5;
+            dateIndex = 2;
+            amountIndex = 4;
+            remarkIndex = 5;
+        } else {
+            // CREDIT
+            isCredit = true;
+            fieldCount = 6;
+            dateIndex = 2;
+            amountIndex = 3;
+            remarkIndex = 4;
+        }
+        
+        var obj = {
+            beginPos: 0,
+            fieldSize: fieldCount
+        };
+        var index = 0;
+        while (obj.fieldSize === fieldCount) {
+            var r = this.readRecordFromCSV(csvText, obj);
+            //console.log("BeginPos="+obj.beginPos+", FieldSize="+obj.fieldSize);
+            if (obj.fieldSize === fieldCount) {
+                index++;
+                if (index > 1) {
+                    transactions[index-2] = {};
+                    //console.log(r[0]+"    "+r[dateIndex]+"    "+r[amountIndex]+"    "+r[remarkIndex]);
+                    transactions[index-2].item = index - 1;
+                    transactions[index-2].occur_time = this.formatBMODate( r[dateIndex] );
+                    transactions[index-2].cate_code = "0000";
+                    transactions[index-2].amount = this.formatBMOAmount( r[amountIndex], isCredit );
+                    transactions[index-2].remark = this.formatBMORemark( r[remarkIndex] );
+                    transactions[index-2].uploaded = false;
+                }
+            }
+            if (obj.beginPos === csvText.length) {
+                obj.fieldSize = 0;
+            } else {
+                obj.fieldSize = fieldCount;
+            }
+        }
+        return transactions;
     };
     
 });
